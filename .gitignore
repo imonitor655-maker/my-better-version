@@ -7,3 +7,4 @@ node_modules/
 screenshot*.png
 screenshot*.js
 .DS_Store
+.vercel

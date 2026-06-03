@@ -107,6 +107,9 @@
 
         // Set up entry remove button visibility
         updateRemoveButtons();
+
+        // Initialize PDF upload handler
+        initPdfUpload();
     }
 
     function updateStepIndicator() {
@@ -671,6 +674,748 @@
     function initSuccessPage() {
         // Nothing special needed — CSS animations handle it
     }
+
+    // ==========================================
+    // AI TOOLS — PDF Upload, Scoring, Vacancy, Walkthrough
+    // ==========================================
+    var storedRawText = '';
+
+    // --- Toggle AI Tools Panel ---
+    window.toggleAiTools = function () {
+        var body = $('#aiToolsBody');
+        if (!body) return;
+        body.classList.toggle('collapsed');
+    };
+
+    // --- PDF Upload ---
+    function initPdfUpload() {
+        var fileInput = $('#pdfFileInput');
+        if (!fileInput) return;
+        fileInput.addEventListener('change', function () {
+            var file = fileInput.files[0];
+            if (!file) return;
+            if (file.type !== 'application/pdf') {
+                showToast('Please select a PDF file.', 'error');
+                return;
+            }
+            handlePdfUpload(file);
+        });
+    }
+
+    function handlePdfUpload(file) {
+        var uploadBtn = $('#pdfUploadBtn');
+        var spinner = $('#pdfSpinner');
+        if (uploadBtn) uploadBtn.style.display = 'none';
+        if (spinner) spinner.style.display = 'flex';
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload-pdf', {
+            method: 'POST',
+            body: formData
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Upload failed: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.resume) {
+                    autoFillFormFromPdf(data.resume);
+                    storedRawText = data.resume.raw_text || '';
+                    showToast('Resume imported! Review and edit below.', 'success');
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+            })
+            .catch(function (err) {
+                console.error('PDF upload error:', err);
+                showToast('Failed to import PDF. Please try again.', 'error');
+            })
+            .finally(function () {
+                if (uploadBtn) uploadBtn.style.display = 'inline-flex';
+                if (spinner) spinner.style.display = 'none';
+                // Reset file input
+                if (fileInput) fileInput.value = '';
+            });
+    }
+
+    function autoFillFormFromPdf(resume) {
+        // Name & Email
+        if (resume.full_name) {
+            var nameEl = $('#fullName');
+            if (nameEl) nameEl.value = resume.full_name;
+        }
+        if (resume.email) {
+            var emailEl = $('#email');
+            if (emailEl) emailEl.value = resume.email;
+        }
+        if (resume.phone) {
+            var phoneEl = $('#phone');
+            if (phoneEl) phoneEl.value = resume.phone;
+        }
+        if (resume.location) {
+            var locEl = $('#location');
+            if (locEl) locEl.value = resume.location;
+        }
+        if (resume.linkedin) {
+            var liEl = $('#linkedin');
+            if (liEl) liEl.value = resume.linkedin;
+        }
+
+        // Experience
+        if (resume.experience && resume.experience.length > 0) {
+            var expContainer = $('#experienceEntries');
+            if (expContainer) {
+                expContainer.innerHTML = '';
+                experienceCount = 0;
+                resume.experience.forEach(function (exp, idx) {
+                    if (idx === 0) {
+                        // Populate first existing entry
+                        var firstCard = expContainer.querySelector('.entry-card');
+                        if (firstCard) {
+                            var company = $('input[name="company"]', firstCard);
+                            var jobTitle = $('input[name="jobTitle"]', firstCard);
+                            var startDate = $('input[name="startDate"]', firstCard);
+                            var endDate = $('input[name="endDate"]', firstCard);
+                            var desc = $('textarea[name="description"]', firstCard);
+                            if (company) company.value = exp.company || exp.employer || '';
+                            if (jobTitle) jobTitle.value = exp.title || exp.role || exp.job_title || '';
+                            if (startDate) startDate.value = exp.startDate || exp.start_date || exp.start || '';
+                            if (endDate) endDate.value = exp.endDate || exp.end_date || exp.end || '';
+                            if (desc) desc.value = exp.description || exp.description || '';
+                        }
+                        experienceCount = 1;
+                    } else {
+                        // Add new entries
+                        addExperience();
+                        var cards = $$('.entry-card', expContainer);
+                        var card = cards[cards.length - 1];
+                        if (card) {
+                            var c = $('input[name="company"]', card);
+                            var t = $('input[name="jobTitle"]', card);
+                            var s = $('input[name="startDate"]', card);
+                            var e = $('input[name="endDate"]', card);
+                            var d = $('textarea[name="description"]', card);
+                            if (c) c.value = exp.company || exp.employer || '';
+                            if (t) t.value = exp.title || exp.role || exp.job_title || '';
+                            if (s) s.value = exp.startDate || exp.start_date || exp.start || '';
+                            if (e) e.value = exp.endDate || exp.end_date || exp.end || '';
+                            if (d) d.value = exp.description || '';
+                        }
+                    }
+                });
+                updateRemoveButtons();
+            }
+        }
+
+        // Education
+        if (resume.education && resume.education.length > 0) {
+            var eduContainer = $('#educationEntries');
+            if (eduContainer) {
+                eduContainer.innerHTML = '';
+                educationCount = 0;
+                resume.education.forEach(function (edu, idx) {
+                    if (idx === 0) {
+                        var firstCard = eduContainer.querySelector('.entry-card');
+                        if (firstCard) {
+                            var school = $('input[name="school"]', firstCard);
+                            var degree = $('input[name="degree"]', firstCard);
+                            var startDate = $('input[name="startDate"]', firstCard);
+                            var endDate = $('input[name="endDate"]', firstCard);
+                            var gpa = $('input[name="gpa"]', firstCard);
+                            if (school) school.value = edu.school || edu.university || edu.institution || '';
+                            if (degree) degree.value = edu.degree || edu.qualification || '';
+                            if (startDate) startDate.value = edu.startDate || edu.start_date || '';
+                            if (endDate) endDate.value = edu.endDate || edu.end_date || edu.graduation_date || '';
+                            if (gpa) gpa.value = edu.gpa || '';
+                        }
+                        educationCount = 1;
+                    } else {
+                        addEducation();
+                        var cards = $$('.entry-card', eduContainer);
+                        var card = cards[cards.length - 1];
+                        if (card) {
+                            var sc = $('input[name="school"]', card);
+                            var dg = $('input[name="degree"]', card);
+                            var sd = $('input[name="startDate"]', card);
+                            var ed = $('input[name="endDate"]', card);
+                            var gp = $('input[name="gpa"]', card);
+                            if (sc) sc.value = edu.school || edu.university || edu.institution || '';
+                            if (dg) dg.value = edu.degree || edu.qualification || '';
+                            if (sd) sd.value = edu.startDate || edu.start_date || '';
+                            if (ed) ed.value = edu.endDate || edu.end_date || edu.graduation_date || '';
+                            if (gp) gp.value = edu.gpa || '';
+                        }
+                    }
+                });
+                updateRemoveButtons();
+            }
+        }
+
+        // Skills
+        if (resume.skills && Array.isArray(resume.skills)) {
+            skills = [];
+            resume.skills.forEach(function (skill) {
+                var s = typeof skill === 'string' ? skill.trim() : (skill.name || skill.skill || '').trim();
+                if (s && skills.indexOf(s) === -1) skills.push(s);
+            });
+            renderSkillTags();
+        }
+
+        // Target Job (if available)
+        if (resume.target_job || resume.job_title) {
+            var targetEl = $('#targetJob');
+            if (targetEl && !targetEl.value.trim()) targetEl.value = resume.target_job || resume.job_title || '';
+        }
+    }
+
+    // --- Resume Text Extraction ---
+    function extractResumeText() {
+        // If we have raw text from PDF, use that
+        if (storedRawText) return storedRawText;
+
+        // Otherwise, collect from form
+        var parts = [];
+        var name = $('#fullName');
+        if (name) parts.push(name.value.trim());
+        var email = $('#email');
+        if (email) parts.push(email.value.trim());
+        var phone = $('#phone');
+        if (phone) parts.push(phone.value.trim());
+        var loc = $('#location');
+        if (loc) parts.push(loc.value.trim());
+
+        // Experience
+        $$('#experienceEntries .entry-card').forEach(function (card) {
+            var company = $('input[name="company"]', card);
+            var jobTitle = $('input[name="jobTitle"]', card);
+            var desc = $('textarea[name="description"]', card);
+            if (jobTitle && jobTitle.value) parts.push(jobTitle.value + ' at ' + (company ? company.value : ''));
+            if (desc && desc.value) parts.push(desc.value);
+        });
+
+        // Education
+        $$('#educationEntries .entry-card').forEach(function (card) {
+            var degree = $('input[name="degree"]', card);
+            var school = $('input[name="school"]', card);
+            if (degree && degree.value) parts.push(degree.value + ' from ' + (school ? school.value : ''));
+        });
+
+        // Skills
+        if (skills.length > 0) parts.push('Skills: ' + skills.join(', '));
+
+        // Target
+        var target = $('#targetJob');
+        if (target && target.value) parts.push('Target: ' + target.value);
+        var jd = $('#jobDescription');
+        if (jd && jd.value) parts.push(jd.value);
+
+        return parts.filter(function (p) { return p.length > 0; }).join('\n\n');
+    }
+
+    // --- Score Resume ---
+    window.scoreResume = function () {
+        var btn = $('#scoreResumeBtn');
+        var spinner = $('#scoreSpinner');
+        if (btn) btn.style.display = 'none';
+        if (spinner) spinner.style.display = 'flex';
+
+        var resumeText = extractResumeText();
+        if (!resumeText || resumeText.length < 20) {
+            showToast('Please fill in more resume details before scoring.', 'error');
+            if (btn) btn.style.display = 'flex';
+            if (spinner) spinner.style.display = 'none';
+            return;
+        }
+
+        fetch('/api/score-resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resume_text: resumeText })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Score error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.score) {
+                    renderScorePanel(data.score);
+                } else {
+                    throw new Error('Unexpected score response');
+                }
+            })
+            .catch(function (err) {
+                console.error('Score error:', err);
+                showToast('Failed to score resume. Please try again.', 'error');
+            })
+            .finally(function () {
+                if (btn) btn.style.display = 'flex';
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
+    function getScoreColorClass(score) {
+        if (score >= 90) return 'score-color-bright-green';
+        if (score >= 75) return 'score-color-green';
+        if (score >= 60) return 'score-color-yellow';
+        if (score >= 40) return 'score-color-orange';
+        return 'score-color-red';
+    }
+
+    function animateNumber(element, target, duration) {
+        duration = duration || 1500;
+        var start = 0;
+        var startTime = null;
+
+        function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            var progress = Math.min((timestamp - startTime) / duration, 1);
+            // Ease out cubic
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(start + (target - start) * eased);
+            element.textContent = current;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function renderScorePanel(score) {
+        var panel = $('#scorePanel');
+        if (!panel) return;
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        // Overall score circle
+        var circle = $('#scoreCircle');
+        var numberEl = $('#scoreNumber');
+        var ringProgress = $('#scoreRingProgress');
+        var overall = score.overall_score || 0;
+
+        // Remove old color classes
+        circle.className = 'score-circle';
+        circle.classList.add(getScoreColorClass(overall));
+
+        // Animate ring
+        var circumference = 339.29;
+        var offset = circumference - (circumference * overall / 100);
+        setTimeout(function () {
+            if (ringProgress) ringProgress.setAttribute('stroke-dashoffset', offset);
+        }, 100);
+
+        // Animate number
+        if (numberEl) animateNumber(numberEl, overall);
+
+        // Sub-scores
+        var barsContainer = $('#scoreBars');
+        if (barsContainer) {
+            var subScores = [
+                { label: 'ATS Compatibility', value: score.ats_compatibility || 0 },
+                { label: 'Content Quality', value: score.content_quality || 0 },
+                { label: 'Completeness', value: score.completeness || 0 },
+                { label: 'Keyword Power', value: score.keyword_power || 0 },
+                { label: 'Impact Score', value: score.impact_score || 0 }
+            ];
+
+            barsContainer.innerHTML = '';
+            subScores.forEach(function (sub) {
+                var bar = document.createElement('div');
+                bar.className = 'score-bar';
+                bar.setAttribute('data-label', sub.label);
+                var colorClass = getScoreColorClass(sub.value);
+                bar.innerHTML =
+                    '<div class="score-bar-header">' +
+                    '  <span class="score-bar-label">' + escapeHTML(sub.label) + '</span>' +
+                    '  <span class="score-bar-value ' + colorClass + '">' + sub.value + '%</span>' +
+                    '</div>' +
+                    '<div class="score-bar-track">' +
+                    '  <div class="score-bar-fill ' + colorClass + '" style="width: 0%"></div>' +
+                    '</div>';
+                bar.addEventListener('click', function () {
+                    toggleScoreDetails(sub.label, score);
+                });
+                barsContainer.appendChild(bar);
+
+                // Animate bar fill
+                setTimeout(function () {
+                    var fill = bar.querySelector('.score-bar-fill');
+                    if (fill) fill.style.width = sub.value + '%';
+                }, 200);
+            });
+        }
+
+        // Quick wins
+        var quickWinsList = $('#quickWinsList');
+        if (quickWinsList && score.quick_wins) {
+            quickWinsList.innerHTML = '';
+            score.quick_wins.forEach(function (win) {
+                var li = document.createElement('li');
+                li.textContent = typeof win === 'string' ? win : (win.text || win.tip || JSON.stringify(win));
+                quickWinsList.appendChild(li);
+            });
+        }
+    }
+
+    function toggleScoreDetails(label, score) {
+        var details = $('#scoreDetails');
+        var title = $('#scoreDetailsTitle');
+        var list = $('#scoreDetailsList');
+        if (!details || !list) return;
+
+        if (details.style.display === 'block' && title.textContent === label) {
+            details.style.display = 'none';
+            return;
+        }
+
+        if (title) title.textContent = label;
+        list.innerHTML = '';
+
+        // Show available details for this sub-score
+        var key = label.toLowerCase().replace(/\s+/g, '_');
+        var detailData = score[key + '_details'] || score[key] || null;
+
+        if (detailData) {
+            if (Array.isArray(detailData)) {
+                detailData.forEach(function (item) {
+                    var li = document.createElement('li');
+                    if (typeof item === 'string') {
+                        li.textContent = item;
+                    } else if (item.status === 'pass') {
+                        li.className = 'pass';
+                        li.textContent = '✓ ' + (item.text || item.message || JSON.stringify(item));
+                    } else if (item.status === 'fail') {
+                        li.className = 'fail';
+                        li.textContent = '✗ ' + (item.text || item.message || JSON.stringify(item));
+                    } else {
+                        li.textContent = typeof item === 'object' ? JSON.stringify(item) : String(item);
+                    }
+                    list.appendChild(li);
+                });
+            } else if (typeof detailData === 'string') {
+                var li = document.createElement('li');
+                li.textContent = detailData;
+                list.appendChild(li);
+            }
+        } else {
+            var li = document.createElement('li');
+            li.textContent = 'Score: ' + (score[key.replace(/_details$/, '')] || 'N/A') + '/100';
+            list.appendChild(li);
+        }
+
+        details.style.display = 'block';
+    }
+
+    // --- Vacancy Comparison ---
+    window.toggleVacancyPanel = function () {
+        var panel = $('#vacancyPanel');
+        var btn = $('.vacancy-toggle');
+        if (!panel) return;
+        if (panel.style.display === 'none') {
+            panel.style.display = 'flex';
+            if (btn) btn.classList.add('active');
+        } else {
+            panel.style.display = 'none';
+            if (btn) btn.classList.remove('active');
+        }
+    };
+
+    window.compareVacancy = function () {
+        var vacancyText = $('#vacancyText');
+        var vacancy = vacancyText ? vacancyText.value.trim() : '';
+        var resumeText = extractResumeText();
+
+        if (!resumeText || resumeText.length < 20) {
+            showToast('Please fill in more resume details first.', 'error');
+            return;
+        }
+        if (!vacancy || vacancy.length < 20) {
+            showToast('Please paste a job description to compare.', 'error');
+            return;
+        }
+
+        var compareBtn = $('#compareBtn');
+        var spinner = $('#compareSpinner');
+        var result = $('#matchResult');
+        var walkthroughResult = $('#walkthroughResult');
+        if (compareBtn) compareBtn.disabled = true;
+        if (spinner) spinner.style.display = 'flex';
+        if (result) result.style.display = 'none';
+        if (walkthroughResult) walkthroughResult.style.display = 'none';
+
+        fetch('/api/compare-vacancy', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resume_text: resumeText, vacancy_text: vacancy })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Compare error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.analysis) {
+                    renderMatchResult(data.analysis);
+                } else {
+                    throw new Error('Unexpected compare response');
+                }
+            })
+            .catch(function (err) {
+                console.error('Compare error:', err);
+                showToast('Failed to compare. Please try again.', 'error');
+            })
+            .finally(function () {
+                if (compareBtn) compareBtn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
+    function renderMatchResult(analysis) {
+        var result = $('#matchResult');
+        if (!result) return;
+        result.style.display = 'flex';
+
+        // Match score
+        var matchScore = analysis.match_score || 0;
+        var matchCircle = $('#matchScoreCircle');
+        var matchNumber = $('#matchScoreNumber');
+        if (matchCircle) {
+            matchCircle.className = 'match-score-circle ' + getScoreColorClass(matchScore);
+        }
+        if (matchNumber) animateNumber(matchNumber, matchScore);
+
+        // ATS Pass Probability
+        var atsValue = $('#matchAtsValue');
+        if (atsValue) atsValue.textContent = (analysis.ats_pass_probability || 0) + '%';
+
+        // Keyword analysis
+        renderKeywordTags('keywordsMatching', analysis.keyword_analysis && analysis.keyword_analysis.matching, 'matching');
+        renderKeywordTags('keywordsMissing', analysis.keyword_analysis && analysis.keyword_analysis.missing, 'missing');
+        renderKeywordTags('keywordsOptional', analysis.keyword_analysis && analysis.keyword_analysis.optional, 'optional');
+
+        // Skills match
+        renderKeywordTags('skillsMatched', analysis.skills_match && analysis.skills_match.matched, 'matching');
+        renderKeywordTags('skillsMissing', analysis.skills_match && analysis.skills_match.missing, 'missing');
+        renderKeywordTags('skillsTransferable', analysis.skills_match && analysis.skills_match.transferable, 'optional');
+
+        // Priority improvements
+        var impList = $('#improvementList');
+        if (impList && analysis.improvement_priority) {
+            impList.innerHTML = '';
+            analysis.improvement_priority.forEach(function (imp) {
+                var li = document.createElement('li');
+                var text = typeof imp === 'string' ? imp : (imp.text || imp.description || imp.item || JSON.stringify(imp));
+                var priority = typeof imp === 'object' ? (imp.priority || imp.level || '') : '';
+                li.innerHTML = '<span class="priority-badge ' + priority.toUpperCase() + '">' + (priority || 'MEDIUM') + '</span> ' + escapeHTML(text);
+                impList.appendChild(li);
+            });
+        }
+    }
+
+    function renderKeywordTags(containerId, items, type) {
+        var container = $('#' + containerId);
+        if (!container) return;
+        container.innerHTML = '';
+        if (!items || !Array.isArray(items)) return;
+        items.forEach(function (item) {
+            var tag = document.createElement('span');
+            var text = typeof item === 'string' ? item : (item.name || item.text || item.keyword || String(item));
+            tag.className = 'keyword-tag ' + type;
+            tag.textContent = text;
+            container.appendChild(tag);
+        });
+    }
+
+    // --- Optimization Walkthrough ---
+    window.generateWalkthrough = function () {
+        var vacancyText = $('#vacancyText');
+        var vacancy = vacancyText ? vacancyText.value.trim() : '';
+        var resumeText = extractResumeText();
+
+        if (!resumeText || !vacancy) {
+            showToast('Need both resume data and job vacancy for walkthrough.', 'error');
+            return;
+        }
+
+        var wtBtn = $('#walkthroughBtn');
+        var wtSpinner = $('#walkthroughSpinner');
+        var wtResult = $('#walkthroughResult');
+        if (wtBtn) wtBtn.disabled = true;
+        if (wtSpinner) wtSpinner.style.display = 'flex';
+        if (wtResult) wtResult.style.display = 'none';
+
+        fetch('/api/generate-walkthrough', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ resume_text: resumeText, vacancy_text: vacancy })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Walkthrough error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.walkthrough) {
+                    renderWalkthrough(data.walkthrough);
+                } else {
+                    throw new Error('Unexpected walkthrough response');
+                }
+            })
+            .catch(function (err) {
+                console.error('Walkthrough error:', err);
+                showToast('Failed to generate walkthrough. Please try again.', 'error');
+            })
+            .finally(function () {
+                if (wtBtn) wtBtn.disabled = false;
+                if (wtSpinner) wtSpinner.style.display = 'none';
+            });
+    };
+
+    function renderWalkthrough(walkthrough) {
+        var wtResult = $('#walkthroughResult');
+        if (!wtResult) return;
+        wtResult.style.display = 'flex';
+
+        // Score flow
+        var currentScoreEl = $('#wsCurrentScore');
+        var projectedScoreEl = $('#wsProjectedScore');
+        var currentScore = walkthrough.current_score || 0;
+        var projectedScore = walkthrough.projected_score || 0;
+
+        if (currentScoreEl) {
+            currentScoreEl.className = 'ws-score-value ' + getScoreColorClass(currentScore);
+            animateNumber(currentScoreEl, currentScore, 1000);
+        }
+        if (projectedScoreEl) {
+            projectedScoreEl.className = 'ws-score-value ' + getScoreColorClass(projectedScore);
+            animateNumber(projectedScoreEl, projectedScore, 1500);
+        }
+
+        // Steps
+        var stepsContainer = $('#walkthroughSteps');
+        if (stepsContainer && walkthrough.steps) {
+            stepsContainer.innerHTML = '';
+            walkthrough.steps.forEach(function (step, idx) {
+                var card = document.createElement('div');
+                card.className = 'walkthrough-step';
+                card.style.animationDelay = (idx * 0.08) + 's';
+
+                var actionType = (step.action || 'modify').toUpperCase();
+                var impact = (step.impact || 'medium').toUpperCase();
+                var section = step.section || 'General';
+                var stepNum = step.step || (idx + 1);
+
+                card.innerHTML =
+                    '<div class="wt-step-header">' +
+                    '  <span class="wt-step-number">' + stepNum + '</span>' +
+                    '  <span class="wt-step-title">' + escapeHTML(step.title || 'Step ' + stepNum) + '</span>' +
+                    '  <span class="section-badge-tag">' + escapeHTML(section) + '</span>' +
+                    '  <span class="action-badge ' + actionType + '">' + actionType + '</span>' +
+                    '  <span class="impact-badge ' + impact + '">' + impact + '</span>' +
+                    '</div>';
+
+                // Diff view (if we have both current and new content)
+                if (step.current_content || step.new_content) {
+                    var diffHtml = '<div class="diff-view">';
+                    if (step.current_content) {
+                        diffHtml += '<div class="diff-current">' + escapeHTML(step.current_content) + '</div>';
+                    }
+                    if (step.new_content) {
+                        diffHtml += '<div class="diff-new">' + escapeHTML(step.new_content) + '</div>';
+                    }
+                    diffHtml += '</div>';
+                    card.innerHTML += diffHtml;
+                }
+
+                // Reason
+                if (step.reason) {
+                    card.innerHTML += '<div class="wt-step-reason">' + escapeHTML(step.reason) + '</div>';
+                }
+
+                // Apply button
+                if (step.new_content) {
+                    card.innerHTML +=
+                        '<div class="wt-step-actions">' +
+                        '  <button class="wt-apply-btn" data-content="' + encodeURIComponent(step.new_content) + '" onclick="applyStepContent(this)">📋 Copy New Content</button>' +
+                        '</div>';
+                }
+
+                stepsContainer.appendChild(card);
+
+                // Trigger visibility animation
+                setTimeout(function () {
+                    card.classList.add('visible');
+                }, 50);
+            });
+        }
+
+        // Key phrases
+        renderKeywordTags('keyPhrases', walkthrough.key_phrases_to_use, 'accent');
+
+        // Power words
+        var powerWordsContainer = $('#powerWords');
+        if (powerWordsContainer && walkthrough.power_words) {
+            powerWordsContainer.innerHTML = '';
+            walkthrough.power_words.forEach(function (word) {
+                var tag = document.createElement('span');
+                var text = typeof word === 'string' ? word : (word.name || word.text || String(word));
+                tag.className = 'keyword-tag matching';
+                tag.textContent = text;
+                powerWordsContainer.appendChild(tag);
+            });
+        }
+    }
+
+    window.applyStepContent = function (btn) {
+        try {
+            var content = decodeURIComponent(btn.getAttribute('data-content'));
+            navigator.clipboard.writeText(content).then(function () {
+                showToast('Content copied to clipboard!', 'success');
+            }).catch(function () {
+                // Fallback: select text area
+                var textarea = document.createElement('textarea');
+                textarea.value = content;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                showToast('Content copied to clipboard!', 'success');
+            });
+        } catch (err) {
+            showToast('Failed to copy content.', 'error');
+        }
+    };
+
+    // --- Optimize Section (on-demand) ---
+    window.optimizeSection = function (currentContent, instruction, vacancyContext) {
+        if (!currentContent || !instruction) return;
+
+        fetch('/api/optimize-section', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                current_content: currentContent,
+                instruction: instruction,
+                vacancy_context: vacancyContext || ''
+            })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Optimize error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.optimized) {
+                    navigator.clipboard.writeText(data.optimized).then(function () {
+                        showToast('Optimized text copied to clipboard!', 'success');
+                    });
+                } else {
+                    showToast('Optimization returned empty result.', 'error');
+                }
+            })
+            .catch(function (err) {
+                console.error('Optimize error:', err);
+                showToast('Failed to optimize. Please try again.', 'error');
+            });
+    };
 
     // ==========================================
     // INITIALIZATION
