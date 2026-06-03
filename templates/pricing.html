@@ -16,190 +16,126 @@
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="nav-logo">
-                <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c5ce7"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7C3AED"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span>My Better Version</span>
             </a>
-            <div class="nav-links">
-                <a href="/builder" class="btn btn-primary btn-sm">Build My Resume</a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/builder">Builder</a>
+                <a href="/pricing" class="active">Pricing</a>
             </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- Pricing Hero -->
-    <section class="pricing-hero">
+    <!-- Pricing Header -->
+    <section class="pricing-header">
         <div class="container">
-            <span class="section-badge">Pricing</span>
-            <h1>Simple, transparent<br><span class="text-gradient">pricing</span></h1>
-            <p class="pricing-hero-subtitle">Start free, upgrade when you're ready. No hidden fees, cancel anytime.</p>
+            <h1>Simple, Transparent Pricing</h1>
+            <p class="hero-subtitle">Choose the plan that fits your career goals. Start free, upgrade anytime.</p>
         </div>
     </section>
 
-    <!-- Pricing Cards -->
+    <!-- Pricing Grid -->
     <section class="pricing-section">
         <div class="container">
-            <div class="pricing-grid pricing-grid-featured">
+            <div class="pricing-grid">
+
+                <!-- Free -->
                 <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Free</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$0</span>
-                            <span class="price-period">forever</span>
-                        </div>
+                    <div class="pricing-name">Free</div>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">$0</span>
+                        <span class="pricing-period">/ forever</span>
                     </div>
-                    <p class="pricing-description">Perfect for trying out the platform and building your first resume.</p>
+                    <p style="color:#94A3B8;margin-bottom:24px;font-size:14px;">Perfect for trying out AI resume building</p>
                     <ul class="pricing-features">
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            1 resume per month
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Basic template
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            PDF export
-                        </li>
-                        <li class="disabled">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            AI optimization
-                        </li>
-                        <li class="disabled">
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Cover letter generator
-                        </li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> 1 AI-generated resume</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Modern template</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Basic ATS scoring</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> PDF export</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> PDF import</li>
+                        <li class="disabled"><svg viewBox="0 0 20 20" fill="#64748B" width="16" height="16"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Vacancy matching</li>
+                        <li class="disabled"><svg viewBox="0 0 20 20" fill="#64748B" width="16" height="16"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/></svg> Optimization walkthrough</li>
                     </ul>
-                    <a href="/builder" class="btn btn-ghost btn-block pricing-btn">Get Started Free</a>
+                    <button class="btn btn-secondary btn-block pricing-cta" onclick="location.href='/builder'">Get Started Free</button>
                 </div>
 
-                <div class="pricing-card pricing-popular">
-                    <div class="popular-badge">Most Popular</div>
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Pro</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$9</span>
-                            <span class="price-period">/month</span>
-                        </div>
+                <!-- Pro -->
+                <div class="pricing-card popular">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-name">Pro</div>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">$9</span>
+                        <span class="pricing-period">/ month</span>
                     </div>
-                    <p class="pricing-description">For serious job seekers who want unlimited access to all features.</p>
+                    <p style="color:#94A3B8;margin-bottom:24px;font-size:14px;">For serious job seekers who want every advantage</p>
                     <ul class="pricing-features">
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Unlimited resumes
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            All premium templates
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            AI-powered optimization
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Cover letter generator
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Priority support
-                        </li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> <strong>Unlimited</strong> AI resumes</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> All templates (Modern, Classic, Minimal)</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Full ATS scoring with insights</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Vacancy matching & analysis</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Optimization walkthrough</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> PDF import & export</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Priority AI processing</li>
                     </ul>
-                    <button class="btn btn-primary btn-block pricing-btn" onclick="createCheckout('pro')">Subscribe to Pro</button>
+                    <button class="btn btn-primary btn-block pricing-cta" onclick="location.href='/builder'">Start Pro Plan</button>
                 </div>
 
+                <!-- Lifetime -->
                 <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Lifetime</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$29</span>
-                            <span class="price-period">one-time</span>
-                        </div>
+                    <div class="pricing-name">Lifetime</div>
+                    <div class="pricing-price">
+                        <span class="pricing-amount">$29</span>
+                        <span class="pricing-period">/ one-time</span>
                     </div>
-                    <p class="pricing-description">Pay once and get everything forever. The best value for lifetime access.</p>
+                    <p style="color:#94A3B8;margin-bottom:24px;font-size:14px;">Pay once, use forever. Best value for your career.</p>
                     <ul class="pricing-features">
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Everything in Pro
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Pay once, use forever
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            All future updates included
-                        </li>
-                        <li>
-                            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
-                            Priority support forever
-                        </li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> <strong>Everything in Pro, forever</strong></li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> All future templates & features</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Full scoring & vacancy matching</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Optimization walkthrough</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> PDF import & export</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> No recurring payments</li>
+                        <li><svg viewBox="0 0 20 20" fill="#10B981" width="16" height="16"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg> Priority support</li>
                     </ul>
-                    <button class="btn btn-ghost btn-block pricing-btn" onclick="createCheckout('lifetime')">Get Lifetime Access</button>
+                    <button class="btn btn-primary btn-block pricing-cta" onclick="location.href='/builder'">Get Lifetime Access</button>
                 </div>
+
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- FAQ -->
     <section class="faq-section">
         <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Frequently Asked<br><span class="text-gradient">Questions</span></h2>
-            </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>Can I try for free before paying?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely! The Free plan lets you build 1 resume per month with a basic template and PDF export. No credit card required. Upgrade when you're ready for unlimited resumes and AI optimization.</p>
-                    </div>
+            <h2 class="section-title" style="text-align:center;margin-bottom:40px;">Frequently Asked Questions</h2>
+            <div style="max-width:720px;margin:0 auto;">
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">How does the AI resume builder work?</button>
+                    <div class="faq-answer"><p>Fill in your details (or import an existing PDF), and our AI (powered by GPT-4o-mini) generates a professional, ATS-optimized resume tailored to your target role. You can then score it, compare it against job vacancies, and get step-by-step optimization suggestions.</p></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What does the AI optimization do?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Our AI analyzes your experience against your target job description, rewrites bullet points for maximum impact, ensures ATS keyword optimization, and structures your resume to highlight your strengths.</p>
-                    </div>
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">What does "ATS-optimized" mean?</button>
+                    <div class="faq-answer"><p>ATS (Applicant Tracking System) is software used by companies to filter resumes. Our AI structures your resume with the right keywords, formatting, and sections so it passes these automated filters and reaches human recruiters.</p></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>Can I cancel my Pro subscription?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Yes, you can cancel anytime from your account settings. You'll continue to have Pro features until the end of your current billing period. No questions asked.</p>
-                    </div>
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">Can I cancel my Pro subscription anytime?</button>
+                    <div class="faq-answer"><p>Yes! You can cancel anytime from your account settings. You'll keep Pro features until the end of your billing period. No lock-in contracts.</p></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What's the difference between Pro and Lifetime?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Pro is a monthly subscription at $9/month. Lifetime is a one-time payment of $29 that gives you permanent access to all Pro features. Both include the same features — Lifetime just saves you money long-term.</p>
-                    </div>
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">Is my data secure?</button>
+                    <div class="faq-answer"><p>Absolutely. Your resume data is processed securely and never shared with third parties. We don't store your resume content after you close the session.</p></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>Is my data safe?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>Absolutely. We use industry-standard encryption, never sell your personal information, and delete resume data after 30 days by default. You're always in control of your data.</p>
-                    </div>
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">What's the difference between Pro and Lifetime?</button>
+                    <div class="faq-answer"><p>Pro is $9/month for ongoing access. Lifetime is a one-time $29 payment that gives you permanent access to all features, including future updates. It's the best long-term value.</p></div>
                 </div>
-                <div class="faq-item">
-                    <button class="faq-question" onclick="toggleFaq(this)">
-                        <span>What formats can I export to?</span>
-                        <svg class="faq-chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 11.168l3.71-3.938a.75.75 0 1 1 1.08 1.04l-4.25 4.5a.75.75 0 0 1-1.08 0l-4.25-4.5a.75.75 0 0 1 .02-1.06Z" clip-rule="evenodd"/></svg>
-                    </button>
-                    <div class="faq-answer">
-                        <p>All plans include PDF export. Pro and Lifetime plans also include Word (.docx) export and plain text export for easy pasting into online applications.</p>
-                    </div>
+                <div class="faq-item" onclick="this.classList.toggle('open')">
+                    <button class="faq-question">Can I import my existing resume?</button>
+                    <div class="faq-answer"><p>Yes! Upload any PDF resume and our AI will parse it, extract your information, and auto-fill the builder form. From there, you can edit, optimize, and regenerate.</p></div>
                 </div>
             </div>
         </div>
@@ -207,52 +143,12 @@
 
     <!-- CTA -->
     <section class="cta-section">
-        <div class="container">
-            <div class="cta-card">
-                <h2>Still have questions?</h2>
-                <p>We're here to help. Reach out and we'll get back to you within 24 hours.</p>
-                <a href="mailto:hello@mybetterversion.com" class="btn btn-primary btn-lg">Contact Us</a>
-            </div>
+        <div class="container" style="text-align:center;">
+            <h2 style="margin-bottom:12px;">Ready to Build Your Better Version?</h2>
+            <p style="color:#94A3B8;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;">Start building your AI-optimized resume today. No credit card required.</p>
+            <a href="/builder" class="btn btn-primary btn-lg">Start Building — Free</a>
         </div>
     </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-brand">
-                <a href="/" class="nav-logo">
-                    <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c5ce7"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    <span>My Better Version</span>
-                </a>
-                <p class="footer-tagline">AI-powered resume building for the modern job seeker.</p>
-            </div>
-            <div class="footer-links">
-                <div class="footer-column">
-                    <h4>Product</h4>
-                    <a href="/builder">Resume Builder</a>
-                    <a href="/pricing">Pricing</a>
-                    <a href="/#features">Features</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Company</h4>
-                    <a href="#">About</a>
-                    <a href="#">Blog</a>
-                    <a href="#">Contact</a>
-                </div>
-                <div class="footer-column">
-                    <h4>Legal</h4>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms of Service</a>
-                    <a href="#">Cookie Policy</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <p>&copy; 2026 My Better Version. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 
     <script src="/static/js/app.js"></script>
 </body>

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resume Builder — My Better Version</title>
+    <meta name="description" content="Build your AI-powered resume. Step-by-step builder with live preview and ATS optimization.">
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,24 +12,30 @@
 </head>
 <body class="builder-page">
 
-    <!-- Sticky Navbar -->
-    <nav class="navbar navbar-sticky">
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="container nav-container">
             <a href="/" class="nav-logo">
-                <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c5ce7"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#7C3AED"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 <span>My Better Version</span>
             </a>
-            <div class="nav-links">
-                <a href="/" class="btn btn-ghost btn-sm">Home</a>
-                <a href="/pricing" class="btn btn-ghost btn-sm">Pricing</a>
+            <div class="nav-links" id="navLinks">
+                <a href="/">Home</a>
+                <a href="/builder">Builder</a>
+                <a href="/pricing">Pricing</a>
             </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
     <!-- Builder Layout -->
     <div class="builder-layout">
+
         <!-- Left Panel: Form -->
         <div class="builder-form-panel">
+
             <!-- Step Indicator -->
             <div class="step-indicator">
                 <div class="step-ind-item active" data-step="1">
@@ -58,472 +65,476 @@
                 <div class="step-ind-line"></div>
                 <div class="step-ind-item" data-step="6">
                     <div class="step-ind-circle">6</div>
-                    <span>Template</span>
+                    <span>Generate</span>
                 </div>
             </div>
 
             <!-- AI Tools Panel -->
             <div class="ai-tools-panel">
                 <div class="ai-tools-header">
-                    <h3>🤖 AI Tools</h3>
-                    <button class="btn-icon ai-tools-toggle" onclick="toggleAiTools()" title="Minimize">
-                        <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>
+                    <h3>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px;margin-right:6px"><path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                        AI Tools
+                    </h3>
+                    <button class="btn-icon" id="aiToolsToggle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m18 15-6-6-6 6"/></svg>
                     </button>
                 </div>
                 <div class="ai-tools-body" id="aiToolsBody">
-
-                    <!-- A) PDF Import -->
+                    <!-- PDF Upload -->
                     <div class="ai-tool-section">
                         <div class="pdf-upload-area">
-                            <input type="file" id="pdfFileInput" accept=".pdf" style="display:none">
-                            <button class="btn pdf-upload-btn" id="pdfUploadBtn" onclick="document.getElementById('pdfFileInput').click()">
-                                <svg viewBox="0 0 20 20" fill="currentColor" width="18" height="18"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                            <input type="file" id="pdfFileInput" accept=".pdf" hidden>
+                            <button class="pdf-upload-btn" id="pdfUploadBtn">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"/></svg>
                                 Upload PDF Resume
                             </button>
                             <div class="pdf-upload-spinner" id="pdfSpinner" style="display:none">
-                                <div class="spinner" style="width:20px;height:20px;border-width:2px"></div>
-                                <span>Importing...</span>
+                                <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
+                                <span>Parsing...</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- B) Score Resume -->
+                    <!-- Score Resume -->
                     <div class="ai-tool-section">
-                        <button class="btn btn-ghost score-btn" id="scoreResumeBtn" onclick="scoreResume()">
-                            📊 Score My Resume
+                        <button class="btn btn-ghost btn-sm score-btn" id="scoreResumeBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"/></svg>
+                            Score Resume
                         </button>
                         <div class="score-btn-spinner" id="scoreSpinner" style="display:none">
-                            <div class="spinner" style="width:16px;height:16px;border-width:2px"></div>
-                            <span>Analyzing...</span>
+                            <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
+                            <span>Scoring...</span>
                         </div>
                     </div>
 
-                    <!-- Score Panel (hidden by default) -->
+                    <!-- Score Panel -->
                     <div class="score-panel" id="scorePanel" style="display:none">
                         <div class="score-panel-header">
                             <h4>Resume Score</h4>
-                            <button class="btn-icon" onclick="document.getElementById('scorePanel').style.display='none'" title="Close">
-                                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
-                            </button>
                         </div>
                         <div class="score-circle-wrapper">
                             <div class="score-circle" id="scoreCircle">
-                                <svg viewBox="0 0 120 120" class="score-ring">
-                                    <circle cx="60" cy="60" r="54" fill="none" stroke="var(--color-border)" stroke-width="8"/>
-                                    <circle cx="60" cy="60" r="54" fill="none" stroke-width="8" stroke-linecap="round" class="score-ring-progress" id="scoreRingProgress" stroke-dasharray="339.29" stroke-dashoffset="339.29" transform="rotate(-90 60 60)"/>
+                                <svg class="score-ring" viewBox="0 0 120 120">
+                                    <circle cx="60" cy="60" r="50" fill="none" stroke="#1E293B" stroke-width="8"/>
+                                    <circle class="score-ring-progress" id="scoreRingProgress" cx="60" cy="60" r="50" fill="none" stroke="#10B981" stroke-width="8" stroke-linecap="round" stroke-dasharray="314.16" stroke-dashoffset="314.16" transform="rotate(-90 60 60)"/>
                                 </svg>
                                 <div class="score-number" id="scoreNumber">0</div>
                             </div>
                         </div>
-                        <div class="score-bars" id="scoreBars">
-                            <!-- Sub-scores rendered by JS -->
-                        </div>
-                        <div class="quick-wins" id="quickWins">
-                            <h4>⚡ Quick Wins</h4>
-                            <ul id="quickWinsList"></ul>
-                        </div>
+                        <div class="score-bars" id="scoreBars"></div>
+                        <div class="quick-wins" id="quickWinsList"></div>
                         <div class="score-details" id="scoreDetails" style="display:none">
                             <h4 id="scoreDetailsTitle">Details</h4>
                             <ul id="scoreDetailsList"></ul>
                         </div>
                     </div>
 
-                    <!-- C) Vacancy Comparison -->
+                    <!-- Vacancy Toggle -->
                     <div class="ai-tool-section">
-                        <button class="btn btn-ghost vacancy-toggle" onclick="toggleVacancyPanel()">
-                            🎯 Match Against Job Vacancy
+                        <button class="btn btn-ghost btn-sm vacancy-toggle" id="vacancyToggle">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"/><path d="M4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/></svg>
+                            Compare with Vacancy
                         </button>
-                        <div class="vacancy-panel" id="vacancyPanel" style="display:none">
-                            <div class="form-group">
-                                <label for="vacancyText">Paste Job Description / Vacancy</label>
-                                <textarea id="vacancyText" rows="5" placeholder="Paste the full job description here..."></textarea>
-                            </div>
-                            <button class="btn btn-primary btn-block" id="compareBtn" onclick="compareVacancy()">
-                                Compare Resume
-                            </button>
-                            <div class="compare-spinner" id="compareSpinner" style="display:none">
-                                <div class="spinner" style="width:16px;height:16px;border-width:2px"></div>
-                                <span>Comparing...</span>
-                            </div>
+                    </div>
 
-                            <!-- Match Results -->
-                            <div class="match-result" id="matchResult" style="display:none">
-                                <div class="match-score-row">
-                                    <div class="match-score-circle" id="matchScoreCircle">
-                                        <span id="matchScoreNumber">0</span>
-                                    </div>
-                                    <div class="match-ats">
-                                        <div class="match-ats-label">ATS Pass Probability</div>
-                                        <div class="match-ats-value" id="matchAtsValue">0%</div>
-                                    </div>
+                    <!-- Vacancy Panel -->
+                    <div class="vacancy-panel" id="vacancyPanel" style="display:none">
+                        <div class="form-group">
+                            <textarea id="vacancyText" placeholder="Paste the job description here..." rows="5"></textarea>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" id="compareBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16.036 8.038a7.5 7.5 0 0 1 0 7.924M18.364 5.64a12 12 0 0 1 0 12.72M8.964 15.962a7.5 7.5 0 0 1 0-7.924M6.636 18.36a12 12 0 0 1 0-12.72"/></svg>
+                            Compare
+                        </button>
+                        <div class="compare-spinner" id="compareSpinner" style="display:none">
+                            <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
+                            <span>Analyzing...</span>
+                        </div>
+                        <div class="match-result" id="matchResult" style="display:none">
+                            <div class="match-score-row">
+                                <div class="match-score-circle" id="matchScoreCircle">
+                                    <span id="matchScoreNumber">0</span>
                                 </div>
-
-                                <div class="match-section">
-                                    <h4>🔑 Keywords</h4>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label matching">Matching:</span>
-                                        <div class="keyword-tags" id="keywordsMatching"></div>
-                                    </div>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label missing">Missing:</span>
-                                        <div class="keyword-tags" id="keywordsMissing"></div>
-                                    </div>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label optional">Optional:</span>
-                                        <div class="keyword-tags" id="keywordsOptional"></div>
-                                    </div>
-                                </div>
-
-                                <div class="match-section">
-                                    <h4>🛠 Skills Match</h4>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label matching">Matched:</span>
-                                        <div class="keyword-tags" id="skillsMatched"></div>
-                                    </div>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label missing">Missing:</span>
-                                        <div class="keyword-tags" id="skillsMissing"></div>
-                                    </div>
-                                    <div class="keyword-group">
-                                        <span class="keyword-group-label optional">Transferable:</span>
-                                        <div class="keyword-tags" id="skillsTransferable"></div>
-                                    </div>
-                                </div>
-
-                                <div class="match-section">
-                                    <h4>📋 Priority Improvements</h4>
-                                    <ul id="improvementList" class="improvement-list"></ul>
-                                </div>
-
-                                <!-- D) Walkthrough -->
-                                <button class="btn btn-primary btn-block walkthrough-btn" id="walkthroughBtn" onclick="generateWalkthrough()">
-                                    🚀 Get Optimization Plan
-                                </button>
-                                <div class="walkthrough-spinner" id="walkthroughSpinner" style="display:none">
-                                    <div class="spinner" style="width:16px;height:16px;border-width:2px"></div>
-                                    <span>Building plan...</span>
+                                <div class="match-ats">
+                                    <span class="match-ats-label">ATS Match</span>
+                                    <span class="match-ats-value" id="matchAtsValue">0%</span>
                                 </div>
                             </div>
-
-                            <!-- Walkthrough Results -->
-                            <div class="walkthrough-result" id="walkthroughResult" style="display:none">
-                                <div class="walkthrough-score-flow">
-                                    <div class="ws-current">
-                                        <div class="ws-score-label">Current Score</div>
-                                        <div class="ws-score-value" id="wsCurrentScore">0</div>
-                                    </div>
-                                    <div class="ws-arrow">→</div>
-                                    <div class="ws-projected">
-                                        <div class="ws-score-label">Projected Score</div>
-                                        <div class="ws-score-value" id="wsProjectedScore">0</div>
-                                    </div>
+                            <div class="match-section">
+                                <h4>Keywords</h4>
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label matching">Matching</span>
+                                    <div class="keyword-tags" id="keywordsMatching"></div>
                                 </div>
-
-                                <div class="walkthrough-steps" id="walkthroughSteps">
-                                    <!-- Step cards rendered by JS -->
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label missing">Missing</span>
+                                    <div class="keyword-tags" id="keywordsMissing"></div>
                                 </div>
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label optional">Optional</span>
+                                    <div class="keyword-tags" id="keywordsOptional"></div>
+                                </div>
+                            </div>
+                            <div class="match-section">
+                                <h4>Skills</h4>
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label matching">Matched</span>
+                                    <div class="keyword-tags" id="skillsMatched"></div>
+                                </div>
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label missing">Missing</span>
+                                    <div class="keyword-tags" id="skillsMissing"></div>
+                                </div>
+                                <div class="keyword-group">
+                                    <span class="keyword-group-label optional">Transferable</span>
+                                    <div class="keyword-tags" id="skillsTransferable"></div>
+                                </div>
+                            </div>
+                            <div class="match-section">
+                                <h4>Suggested Improvements</h4>
+                                <ul class="improvement-list" id="improvementList"></ul>
+                            </div>
+                        </div>
 
-                                <div class="walkthrough-extra">
-                                    <div class="wt-section">
-                                        <h4>💬 Key Phrases to Use</h4>
-                                        <div class="keyword-tags" id="keyPhrases"></div>
-                                    </div>
-                                    <div class="wt-section">
-                                        <h4>💪 Power Words</h4>
-                                        <div class="keyword-tags" id="powerWords"></div>
-                                    </div>
+                        <button class="btn btn-primary btn-sm btn-block walkthrough-btn" id="walkthroughBtn" style="margin-top:8px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
+                            Generate Walkthrough
+                        </button>
+                        <div class="walkthrough-spinner" id="walkthroughSpinner" style="display:none">
+                            <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>
+                            <span>Generating walkthrough...</span>
+                        </div>
+                        <div class="walkthrough-result" id="walkthroughResult" style="display:none">
+                            <div class="walkthrough-score-flow">
+                                <div class="ws-current">
+                                    <div class="ws-score-label">Current Score</div>
+                                    <div class="ws-score-value" id="wsCurrentScore">0</div>
+                                </div>
+                                <div class="ws-arrow">→</div>
+                                <div class="ws-projected">
+                                    <div class="ws-score-label">Projected Score</div>
+                                    <div class="ws-score-value" id="wsProjectedScore">0</div>
+                                </div>
+                            </div>
+                            <div class="walkthrough-steps" id="walkthroughSteps"></div>
+                            <div class="walkthrough-extra" id="walkthroughExtra" style="display:none">
+                                <div class="wt-section">
+                                    <h4>🔑 Key Phrases to Include</h4>
+                                    <div class="keyword-tags" id="keyPhrases"></div>
+                                </div>
+                                <div class="wt-section">
+                                    <h4>⚡ Power Words</h4>
+                                    <div class="keyword-tags" id="powerWords"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- Step 1: Personal Info -->
-            <div class="form-step active" id="step-1">
+            <div class="form-step active" id="step-1" data-step="1">
                 <div class="form-step-header">
                     <h2>Personal Information</h2>
-                    <p>Let's start with the basics. This information goes at the top of your resume.</p>
+                    <p>This goes at the top of your resume.</p>
                 </div>
                 <div class="form-group">
-                    <label for="fullName">Full Name *</label>
-                    <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+                    <label for="fullName">Full Name <span class="accent">*</span></label>
+                    <input type="text" id="fullName" placeholder="e.g. John Smith">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="email">Email *</label>
-                        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                        <label for="email">Email <span class="accent">*</span></label>
+                        <input type="email" id="email" placeholder="john@example.com">
                     </div>
                     <div class="form-group">
                         <label for="phone">Phone</label>
-                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+                        <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="location">Location</label>
-                        <input type="text" id="location" name="location" placeholder="San Francisco, CA">
+                        <input type="text" id="location" placeholder="New York, NY">
                     </div>
                     <div class="form-group">
-                        <label for="linkedin">LinkedIn</label>
-                        <input type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/johndoe">
+                        <label for="linkedin">LinkedIn URL</label>
+                        <input type="url" id="linkedin" placeholder="linkedin.com/in/johnsmith">
                     </div>
                 </div>
                 <div class="form-actions">
                     <div></div>
-                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                    <button class="btn btn-primary" onclick="App.nextStep()">Next: Experience →</button>
                 </div>
             </div>
 
-            <!-- Step 2: Work Experience -->
-            <div class="form-step" id="step-2">
+            <!-- Step 2: Experience -->
+            <div class="form-step" id="step-2" data-step="2">
                 <div class="form-step-header">
                     <h2>Work Experience</h2>
-                    <p>Add your most recent positions. Focus on achievements and impact.</p>
+                    <p>Add relevant positions with measurable achievements.</p>
                 </div>
                 <div id="experienceEntries">
-                    <div class="entry-card" data-entry="experience-0">
+                    <div class="entry-card">
                         <div class="entry-header">
                             <span class="entry-title">Position 1</span>
-                            <button class="btn-icon btn-remove-entry" onclick="removeEntry(this)" title="Remove" style="visibility:hidden">
-                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.257 4.757a.75.75 0 0 1 1.043-.216l12 9a.75.75 0 0 1-.827 1.252l-12-9a.75.75 0 0 1-.216-1.036Zm8.03 5.47a.75.75 0 0 1 .827-.208l3 1.5a.75.75 0 1 1-.671 1.342l-3-1.5a.75.75 0 0 1-.156-1.134Z" clip-rule="evenodd"/></svg>
+                            <button class="btn-icon btn-remove-entry" onclick="App.removeEntry(this, 'experience')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Company</label>
-                                <input type="text" name="company" placeholder="Acme Inc.">
+                                <label>Job Title</label>
+                                <input type="text" name="jobTitle" placeholder="e.g. Senior Developer">
                             </div>
                             <div class="form-group">
-                                <label>Job Title</label>
-                                <input type="text" name="jobTitle" placeholder="Software Engineer">
+                                <label>Company</label>
+                                <input type="text" name="company" placeholder="e.g. Google">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Start Date</label>
-                                <input type="text" name="startDate" placeholder="Jan 2022">
+                                <input type="text" name="startDate" placeholder="e.g. Jan 2020">
                             </div>
                             <div class="form-group">
                                 <label>End Date</label>
-                                <input type="text" name="endDate" placeholder="Present">
+                                <input type="text" name="endDate" placeholder="e.g. Present">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Description</label>
-                            <textarea name="description" rows="4" placeholder="Describe your key responsibilities and achievements..."></textarea>
+                            <label>Description / Bullet Points</label>
+                            <textarea name="description" rows="4" placeholder="Describe your responsibilities and achievements, one per line..."></textarea>
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-add-entry" onclick="addExperience()">
-                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+                <button class="btn-add-entry" onclick="App.addExperience()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
                     Add Another Position
                 </button>
                 <div class="form-actions">
-                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                    <button class="btn btn-ghost" onclick="App.prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="App.nextStep()">Next: Education →</button>
                 </div>
             </div>
 
             <!-- Step 3: Education -->
-            <div class="form-step" id="step-3">
+            <div class="form-step" id="step-3" data-step="3">
                 <div class="form-step-header">
                     <h2>Education</h2>
-                    <p>Add your educational background, starting with the most recent.</p>
+                    <p>Add degrees, certifications, and relevant coursework.</p>
                 </div>
                 <div id="educationEntries">
-                    <div class="entry-card" data-entry="education-0">
+                    <div class="entry-card">
                         <div class="entry-header">
                             <span class="entry-title">Education 1</span>
-                            <button class="btn-icon btn-remove-entry" onclick="removeEntry(this)" title="Remove" style="visibility:hidden">
-                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+                            <button class="btn-icon btn-remove-entry" onclick="App.removeEntry(this, 'education')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
                             </button>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>School / University</label>
-                                <input type="text" name="school" placeholder="Stanford University">
+                                <label>School</label>
+                                <input type="text" name="school" placeholder="e.g. MIT">
                             </div>
                             <div class="form-group">
                                 <label>Degree</label>
-                                <input type="text" name="degree" placeholder="B.S. Computer Science">
+                                <input type="text" name="degree" placeholder="e.g. B.S. Computer Science">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Start Date</label>
-                                <input type="text" name="startDate" placeholder="Sep 2018">
+                                <input type="text" name="startDate" placeholder="e.g. 2016">
                             </div>
                             <div class="form-group">
                                 <label>End Date</label>
-                                <input type="text" name="endDate" placeholder="Jun 2022">
+                                <input type="text" name="endDate" placeholder="e.g. 2020">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>GPA (optional)</label>
-                            <input type="text" name="gpa" placeholder="3.8 / 4.0">
+                            <label>GPA / Additional Info</label>
+                            <input type="text" name="gpa" placeholder="e.g. GPA: 3.8/4.0, Magna Cum Laude">
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-add-entry" onclick="addEducation()">
-                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
-                    Add Another Education
+                <button class="btn-add-entry" onclick="App.addEducation()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14m-7-7h14"/></svg>
+                    Add Education
                 </button>
                 <div class="form-actions">
-                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                    <button class="btn btn-ghost" onclick="App.prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="App.nextStep()">Next: Skills →</button>
                 </div>
             </div>
 
             <!-- Step 4: Skills -->
-            <div class="form-step" id="step-4">
+            <div class="form-step" id="step-4" data-step="4">
                 <div class="form-step-header">
                     <h2>Skills</h2>
-                    <p>Type a skill and press Enter to add it. Add as many as relevant.</p>
+                    <p>Add technical and soft skills. Type and press Enter to add.</p>
                 </div>
                 <div class="form-group">
-                    <label>Add Skills</label>
-                    <div class="tag-input-wrapper">
+                    <label>Skills</label>
+                    <div class="tag-input-wrapper" id="tagInputWrapper">
                         <div class="tag-list" id="skillTags"></div>
                         <input type="text" id="skillInput" placeholder="Type a skill and press Enter...">
                     </div>
                 </div>
                 <div class="skill-suggestions">
-                    <span class="suggestion-label">Suggestions:</span>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">JavaScript</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Python</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">React</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Node.js</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">SQL</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">AWS</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Docker</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Git</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Agile</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Leadership</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Communication</button>
-                    <button class="suggestion-chip" onclick="addSuggestion(this)">Problem Solving</button>
+                    <span class="suggestion-label">Popular:</span>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">JavaScript</button>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">Python</button>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">React</button>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">SQL</button>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">Leadership</button>
+                    <button class="suggestion-chip" onclick="App.addSuggestedSkill(this)">Communication</button>
                 </div>
                 <div class="form-actions">
-                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                    <button class="btn btn-ghost" onclick="App.prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="App.nextStep()">Next: Target →</button>
                 </div>
             </div>
 
-            <!-- Step 5: Job Target -->
-            <div class="form-step" id="step-5">
+            <!-- Step 5: Target Job -->
+            <div class="form-step" id="step-5" data-step="5">
                 <div class="form-step-header">
-                    <h2>Job Target</h2>
-                    <p>Tell us about the job you're applying for so we can tailor your resume.</p>
+                    <h2>Target Job</h2>
+                    <p>We'll tailor your resume for this specific role.</p>
                 </div>
                 <div class="form-group">
-                    <label for="targetJob">Target Job Title *</label>
-                    <input type="text" id="targetJob" name="targetJob" placeholder="Senior Software Engineer" required>
+                    <label for="targetJob">Job Title</label>
+                    <input type="text" id="targetJob" placeholder="e.g. Senior Frontend Developer">
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="industry">Industry</label>
-                        <input type="text" id="industry" name="industry" placeholder="Technology">
+                        <input type="text" id="industry" placeholder="e.g. Technology / SaaS">
                     </div>
                     <div class="form-group">
                         <label for="yearsExperience">Years of Experience</label>
-                        <input type="text" id="yearsExperience" name="yearsExperience" placeholder="5">
+                        <input type="text" id="yearsExperience" placeholder="e.g. 5+">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="jobDescription">Job Description (optional)</label>
-                    <textarea id="jobDescription" name="jobDescription" rows="4" placeholder="Paste the job description here for better AI optimization..."></textarea>
+                    <textarea id="jobDescription" rows="6" placeholder="Paste the job description here for tailored optimization..."></textarea>
                 </div>
                 <div class="form-actions">
-                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
-                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                    <button class="btn btn-ghost" onclick="App.prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="App.nextStep()">Next: Generate →</button>
                 </div>
             </div>
 
-            <!-- Step 6: Template Selection -->
-            <div class="form-step" id="step-6">
+            <!-- Step 6: Generate -->
+            <div class="form-step" id="step-6" data-step="6">
                 <div class="form-step-header">
-                    <h2>Choose a Template</h2>
-                    <p>Select a design that matches your style. You can always change it later.</p>
+                    <h2>Generate Resume</h2>
+                    <p>Choose a template and let AI craft your perfect resume.</p>
                 </div>
+
                 <div class="template-grid">
-                    <div class="template-card" data-template="modern" onclick="selectTemplate('modern')">
+                    <div class="template-card selected" data-template="modern" onclick="App.selectTemplate(this)">
                         <div class="template-preview template-modern">
-                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
-                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                            <div class="tp-header">
+                                <div class="tp-name">John Smith</div>
+                                <div class="tp-title">Senior Developer</div>
+                            </div>
+                            <div class="tp-body">
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div><div class="tp-line short"></div></div>
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div></div>
+                            </div>
                         </div>
                         <div class="template-label">
                             <input type="radio" name="template" value="modern" checked>
-                            <span>Modern</span>
-                            <span class="template-badge">Recommended</span>
+                            Modern
                         </div>
                     </div>
-                    <div class="template-card" data-template="classic" onclick="selectTemplate('classic')">
+                    <div class="template-card" data-template="classic" onclick="App.selectTemplate(this)">
                         <div class="template-preview template-classic">
-                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
-                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                            <div class="tp-header">
+                                <div class="tp-name">John Smith</div>
+                                <div class="tp-title">Senior Developer</div>
+                            </div>
+                            <div class="tp-body">
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div><div class="tp-line short"></div></div>
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div></div>
+                            </div>
                         </div>
                         <div class="template-label">
                             <input type="radio" name="template" value="classic">
-                            <span>Classic</span>
+                            Classic
+                            <span class="pro-badge">PRO</span>
                         </div>
                     </div>
-                    <div class="template-card" data-template="minimal" onclick="selectTemplate('minimal')">
+                    <div class="template-card" data-template="minimal" onclick="App.selectTemplate(this)">
                         <div class="template-preview template-minimal">
-                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
-                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                            <div class="tp-header">
+                                <div class="tp-name">John Smith</div>
+                                <div class="tp-title">Senior Developer</div>
+                            </div>
+                            <div class="tp-body">
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div><div class="tp-line short"></div></div>
+                                <div class="tp-section"><div class="tp-line"></div><div class="tp-line"></div></div>
+                            </div>
                         </div>
                         <div class="template-label">
                             <input type="radio" name="template" value="minimal">
-                            <span>Minimal</span>
-                            <span class="pro-badge">Pro</span>
+                            Minimal
+                            <span class="pro-badge">PRO</span>
                         </div>
                     </div>
                 </div>
+
+                <button class="btn btn-primary btn-lg btn-block btn-generate" id="generateBtn" onclick="App.generateResume()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                    Generate My Resume
+                </button>
                 <div class="form-actions">
-                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
-                    <button class="btn btn-primary btn-generate" id="generateBtn" onclick="generateResume()">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
-                        Generate Resume
-                    </button>
+                    <button class="btn btn-ghost" onclick="App.prevStep()">← Back</button>
+                    <div></div>
                 </div>
             </div>
-        </div>
+
+        </div><!-- end builder-form-panel -->
 
         <!-- Right Panel: Preview -->
         <div class="builder-preview-panel">
             <div class="preview-header">
-                <h3>Resume Preview</h3>
-                <div class="preview-actions" id="previewActions" style="display:none">
-                    <button class="btn btn-primary btn-sm" id="downloadPdfBtn" onclick="downloadPDF()">
-                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-3px;margin-right:6px"><path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+                    Live Preview
+                </h3>
+                <div class="preview-actions" id="previewActions">
+                    <button class="btn btn-primary btn-sm" id="downloadPdfBtn" style="display:none" onclick="App.downloadPdf()">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
                         Download PDF
                     </button>
                 </div>
             </div>
             <div class="preview-content" id="resumePreview">
-                <!-- Live preview or AI-generated resume appears here -->
                 <div class="preview-placeholder">
-                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M6 8h36v32H6z" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M14 18h20M14 24h16M14 30h12" stroke-linecap="round"/>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="1.5">
+                        <path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/>
                     </svg>
-                    <p>Fill in your details to see a live preview of your resume.</p>
-                    <p class="preview-hint">Your AI-generated resume will appear here after completing all steps.</p>
+                    <p>Your resume preview will appear here</p>
+                    <p class="preview-hint">Fill in the form and click Generate to create your resume</p>
                 </div>
             </div>
-        </div>
-    </div>
+        </div><!-- end builder-preview-panel -->
+
+    </div><!-- end builder-layout -->
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay" style="display:none">
         <div class="loading-spinner">
             <div class="spinner"></div>
-            <p>Generating your resume with AI...</p>
+            <p id="loadingText">Generating your resume with AI...</p>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div class="toast" id="toast"></div>
 
     <script src="/static/js/app.js"></script>

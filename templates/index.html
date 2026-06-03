@@ -17,16 +17,15 @@
         <div class="container nav-container">
             <a href="/" class="nav-logo">
                 <svg class="logo-icon" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="32" height="32" rx="8" fill="#6c5ce7"/>
+                    <rect width="32" height="32" rx="8" fill="#7C3AED"/>
                     <path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <span>My Better Version</span>
             </a>
             <div class="nav-links" id="navLinks">
-                <a href="/#features">Features</a>
-                <a href="/#how-it-works">How It Works</a>
+                <a href="/">Home</a>
+                <a href="/builder">Builder</a>
                 <a href="/pricing">Pricing</a>
-                <a href="/builder" class="btn btn-primary btn-sm">Build My Resume</a>
             </div>
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
                 <span></span>
@@ -38,95 +37,98 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="container hero-container">
-            <div class="hero-badge animate-fade-up">
-                <span class="badge-dot"></span>
-                AI-Powered Resume Builder
-            </div>
-            <h1 class="hero-title animate-fade-up delay-1">
+        <div class="container">
+            <div class="hero-badge">✨ AI-Powered Resume Builder</div>
+            <h1 class="hero-title">
                 Your Better Version<br>
                 <span class="text-gradient">Starts Here</span>
             </h1>
-            <p class="hero-subtitle animate-fade-up delay-2">
+            <p class="hero-subtitle">
                 Stop struggling with resume formats. Our AI crafts ATS-optimized, professionally written resumes in minutes — so you can focus on landing the job.
             </p>
-            <div class="hero-cta animate-fade-up delay-3">
-                <a href="/builder" class="btn btn-primary btn-lg">
-                    Build My Resume
+            <div class="hero-cta">
+                <a href="/builder" class="btn btn-primary">
+                    Get Started
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
-                <a href="/pricing" class="btn btn-ghost btn-lg">View Pricing</a>
-            </div>
-            <div class="hero-stats animate-fade-up delay-4">
-                <div class="stat">
-                    <span class="stat-number">10K+</span>
-                    <span class="stat-label">Resumes Built</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number">95%</span>
-                    <span class="stat-label">ATS Pass Rate</span>
-                </div>
-                <div class="stat-divider"></div>
-                <div class="stat">
-                    <span class="stat-number">4.9★</span>
-                    <span class="stat-label">User Rating</span>
-                </div>
+                <a href="/pricing" class="btn btn-secondary">See Pricing</a>
             </div>
         </div>
         <div class="hero-glow"></div>
     </section>
 
     <!-- Features Section -->
-    <section class="features" id="features">
+    <section class="features-section" id="features">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">Features</span>
-                <h2 class="section-title">Everything you need to build a<br><span class="text-gradient">standout resume</span></h2>
-                <p class="section-subtitle">Powerful tools designed to make your resume shine and pass every ATS filter.</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card animate-fade-up">
+            <h2 class="section-title">Everything you need to build a <span class="text-gradient">standout resume</span></h2>
+            <div class="feature-grid">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3l1.5 4.5H18l-3.5 2.5 1.5 4.5L12 12l-4 2.5 1.5-4.5L6 7.5h4.5z"/>
+                            <path d="M17 2l1 3h3l-2.5 1.8 1 3L17 8.2 14.5 9.8l1-3L13 5h3z" transform="translate(2,-1) scale(0.6)"/>
+                        </svg>
                     </div>
-                    <h3>AI-Powered Writing</h3>
-                    <p>Our AI analyzes your experience and crafts compelling bullet points that highlight your achievements and impact.</p>
+                    <h3 class="feature-title">AI-Powered Writing</h3>
+                    <p class="feature-desc">Our AI analyzes your experience and crafts compelling bullet points that highlight your achievements and impact.</p>
                 </div>
-                <div class="feature-card animate-fade-up delay-1">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/>
+                        </svg>
                     </div>
-                    <h3>ATS-Optimized</h3>
-                    <p>Every resume is built to pass Applicant Tracking Systems with optimized formatting and keyword placement.</p>
+                    <h3 class="feature-title">ATS Optimization</h3>
+                    <p class="feature-desc">Every resume is built to pass Applicant Tracking Systems with optimized formatting and keyword placement.</p>
                 </div>
-                <div class="feature-card animate-fade-up delay-2">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.098 19.902a3.75 3.75 0 0 0 5.304 0l6.401-6.402M6.75 21A3.75 3.75 0 0 1 3 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 0 0 3.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008Z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                            <path d="M12 12V4"/>
+                            <path d="m8 8 4-4 4 4"/>
+                            <path d="M4 8h4l2 3h4l2-3h4"/>
+                        </svg>
                     </div>
-                    <h3>Multiple Templates</h3>
-                    <p>Choose from modern, classic, and minimal designs — all professionally crafted by hiring managers.</p>
+                    <h3 class="feature-title">PDF Import</h3>
+                    <p class="feature-desc">Upload your existing resume as a PDF and our AI extracts and enhances your content automatically.</p>
                 </div>
-                <div class="feature-card animate-fade-up delay-3">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18"/>
+                            <path d="M7 16l4-6 4 3 4-8"/>
+                            <path d="M18 11h2v2"/>
+                        </svg>
                     </div>
-                    <h3>PDF Export</h3>
-                    <p>Download your resume as a clean, print-ready PDF that looks perfect on any device or printer.</p>
+                    <h3 class="feature-title">Score & Analyze</h3>
+                    <p class="feature-desc">Get a real-time score showing how well your resume matches the job description and ATS requirements.</p>
                 </div>
-                <div class="feature-card animate-fade-up delay-4">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="6"/>
+                            <circle cx="12" cy="12" r="2"/>
+                            <path d="M12 2v4"/>
+                            <path d="M12 18v4"/>
+                            <path d="M2 12h4"/>
+                            <path d="M18 12h4"/>
+                        </svg>
                     </div>
-                    <h3>24/7 Available</h3>
-                    <p>Build your resume anytime, anywhere. No appointments needed — our AI works around your schedule.</p>
+                    <h3 class="feature-title">Vacancy Matching</h3>
+                    <p class="feature-desc">Paste a job listing and our AI tailors your resume to match the specific role and keywords.</p>
                 </div>
-                <div class="feature-card animate-fade-up delay-5">
+                <div class="feature-card">
                     <div class="feature-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z"/></svg>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 3v12"/>
+                            <path d="m8 11 4 4 4-4"/>
+                            <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+                        </svg>
                     </div>
-                    <h3>Privacy First</h3>
-                    <p>Your data stays yours. We never sell your information and delete resumes after 30 days by default.</p>
+                    <h3 class="feature-title">One-Click Export</h3>
+                    <p class="feature-desc">Download your polished resume as a clean, print-ready PDF with a single click.</p>
                 </div>
             </div>
         </div>
@@ -135,44 +137,32 @@
     <!-- How It Works Section -->
     <section class="how-it-works" id="how-it-works">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">How It Works</span>
-                <h2 class="section-title">Three steps to your<br><span class="text-gradient">dream resume</span></h2>
-            </div>
-            <div class="steps-grid">
+            <h2 class="section-title">Three steps to your <span class="text-gradient">dream resume</span></h2>
+            <div class="step-grid">
                 <div class="step-card">
                     <div class="step-number">1</div>
-                    <h3>Fill in your details</h3>
-                    <p>Enter your work experience, education, skills, and the job you're targeting. Takes about 5 minutes.</p>
-                </div>
-                <div class="step-connector">
-                    <svg viewBox="0 0 80 24" fill="none"><path d="M0 12h70m0 0-8-8m8 8-8 8" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <h3 class="step-title">Fill Your Details</h3>
+                    <p class="step-desc">Enter your work experience, education, skills, and the job you're targeting. Takes about 5 minutes.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-number">2</div>
-                    <h3>AI crafts your resume</h3>
-                    <p>Our AI analyzes your profile and generates a tailored, ATS-optimized resume with professional writing.</p>
-                </div>
-                <div class="step-connector">
-                    <svg viewBox="0 0 80 24" fill="none"><path d="M0 12h70m0 0-8-8m8 8-8 8" stroke="#6c5ce7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <h3 class="step-title">AI Generates Resume</h3>
+                    <p class="step-desc">Our AI analyzes your profile and generates a tailored, ATS-optimized resume with professional writing.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-number">3</div>
-                    <h3>Download &amp; apply</h3>
-                    <p>Preview your resume, make any tweaks, and download as a PDF. Start applying with confidence.</p>
+                    <h3 class="step-title">Download & Apply</h3>
+                    <p class="step-desc">Preview your resume, make any tweaks, and download as a PDF. Start applying with confidence.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section class="testimonials">
+    <section class="testimonials" id="testimonials">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">Testimonials</span>
-                <h2 class="section-title">Loved by thousands<br><span class="text-gradient">of job seekers</span></h2>
-            </div>
-            <div class="testimonials-grid">
+            <h2 class="section-title">Loved by thousands <span class="text-gradient">of job seekers</span></h2>
+            <div class="testimonial-grid">
                 <div class="testimonial-card">
                     <div class="testimonial-stars">★★★★★</div>
                     <p class="testimonial-text">"I went from 0 interviews to 5 callbacks in two weeks. The AI perfectly rewrote my experience to match what recruiters look for. Absolutely game-changing."</p>
@@ -210,62 +200,53 @@
         </div>
     </section>
 
-    <!-- Pricing Preview Section -->
-    <section class="pricing-preview" id="pricing">
+    <!-- Pricing Section -->
+    <section class="pricing-section" id="pricing">
         <div class="container">
-            <div class="section-header">
-                <span class="section-badge">Pricing</span>
-                <h2 class="section-title">Simple, transparent<br><span class="text-gradient">pricing</span></h2>
-                <p class="section-subtitle">Start free, upgrade when you're ready. No hidden fees, cancel anytime.</p>
-            </div>
+            <h2 class="section-title">Simple, transparent <span class="text-gradient">pricing</span></h2>
+            <p class="section-subtitle">Start free, upgrade when you're ready. No hidden fees, cancel anytime.</p>
             <div class="pricing-grid">
                 <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Free</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$0</span>
-                            <span class="price-period">forever</span>
-                        </div>
+                    <h3 class="pricing-name">Free</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$0</span>
+                        <span class="price-period">forever</span>
                     </div>
                     <ul class="pricing-features">
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> 1 resume per month</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Basic template</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> PDF export</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> 1 resume</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Basic template</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> PDF export</li>
                     </ul>
-                    <a href="/builder" class="btn btn-ghost btn-block">Get Started Free</a>
+                    <a href="/builder" class="btn btn-secondary pricing-cta">Get Started Free</a>
                 </div>
-                <div class="pricing-card pricing-popular">
-                    <div class="popular-badge">Most Popular</div>
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Pro</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$9</span>
-                            <span class="price-period">/month</span>
-                        </div>
+                <div class="pricing-card popular">
+                    <div class="pricing-badge">Most Popular</div>
+                    <h3 class="pricing-name">Pro</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$9</span>
+                        <span class="price-period">/month</span>
                     </div>
                     <ul class="pricing-features">
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Unlimited resumes</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> All templates</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> AI optimization</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Cover letter generator</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Priority support</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Unlimited resumes</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> All templates</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> AI optimization</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Cover letter generator</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Priority support</li>
                     </ul>
-                    <a href="/pricing" class="btn btn-primary btn-block">Subscribe to Pro</a>
+                    <a href="/pricing" class="btn btn-primary pricing-cta">Subscribe to Pro</a>
                 </div>
                 <div class="pricing-card">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Lifetime</h3>
-                        <div class="pricing-price">
-                            <span class="price-amount">$29</span>
-                            <span class="price-period">one-time</span>
-                        </div>
+                    <h3 class="pricing-name">Lifetime</h3>
+                    <div class="pricing-price">
+                        <span class="price-amount">$29</span>
+                        <span class="price-period">one-time</span>
                     </div>
                     <ul class="pricing-features">
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Everything in Pro</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Pay once, use forever</li>
-                        <li><svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> All future updates</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Everything in Pro</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> Pay once, use forever</li>
+                        <li><svg width="16" height="16" viewBox="0 0 20 20" fill="#7C3AED"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg> All future updates</li>
                     </ul>
-                    <a href="/pricing" class="btn btn-ghost btn-block">Get Lifetime Access</a>
+                    <a href="/pricing" class="btn btn-secondary pricing-cta">Get Lifetime Access</a>
                 </div>
             </div>
         </div>
@@ -274,10 +255,11 @@
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
-            <div class="cta-card">
-                <h2>Ready to build your better version?</h2>
-                <p>Join thousands of professionals who've landed their dream jobs with AI-crafted resumes.</p>
-                <a href="/builder" class="btn btn-primary btn-lg">Start Building — It's Free</a>
+            <h2>Ready to Build Your Better Version?</h2>
+            <p>Join thousands of professionals who've landed their dream jobs with AI-crafted resumes.</p>
+            <div class="hero-cta">
+                <a href="/builder" class="btn btn-primary">Start Building — It's Free</a>
+                <a href="/pricing" class="btn btn-secondary">See Pricing</a>
             </div>
         </div>
     </section>
@@ -287,7 +269,10 @@
         <div class="container footer-container">
             <div class="footer-brand">
                 <a href="/" class="nav-logo">
-                    <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c5ce7"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    <svg class="logo-icon" viewBox="0 0 32 32" fill="none">
+                        <rect width="32" height="32" rx="8" fill="#7C3AED"/>
+                        <path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
                     <span>My Better Version</span>
                 </a>
                 <p class="footer-tagline">AI-powered resume building for the modern job seeker.</p>
