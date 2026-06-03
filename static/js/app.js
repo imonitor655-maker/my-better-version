@@ -498,83 +498,157 @@
         var preview = $('#resumePreview');
         if (!preview) return;
 
+        // Handle error responses
+        if (data.error) {
+            preview.innerHTML = '<div class="resume-preview-content" style="padding:20px;color:#ff6b6b;">Error generating resume: ' + escapeHTML(data.error) + '</div>';
+            showToast('Failed to generate resume: ' + data.error, 'error');
+            return;
+        }
+
         // API returns {success: true, resume: {...}} — the resume is a JSON object
         var resume = data.resume || data;
         generatedResumeData = resume;
 
+        // Extract fields with fallbacks for different AI response formats
+        var name = resume.full_name || resume.name || resume.fullName || '';
+        var email = resume.email || '';
+        var phone = resume.phone || '';
+        var location = resume.location || '';
+        var linkedin = resume.linkedin || '';
+        var website = resume.website || resume.portfolio || '';
+        var summary = resume.professional_summary || resume.summary || resume.objective || '';
+        var expList = resume.experience || resume.work_experience || resume.work || [];
+        var eduList = resume.education || [];
+        var skillsList = resume.skills || [];
+
         var html = '';
 
-        // Name & Contact
-        html += '<h1>' + escapeHTML(resume.full_name || 'Your Name') + '</h1>';
+        // Name
+        if (name) {
+            html += '<h1>' + escapeHTML(name) + '</h1>';
+        } else {
+            html += '<h1>Your Name</h1>';
+        }
+
+        // Contact
         var contactParts = [];
-        if (resume.email) contactParts.push(escapeHTML(resume.email));
-        if (resume.phone) contactParts.push(escapeHTML(resume.phone));
-        if (resume.location) contactParts.push(escapeHTML(resume.location));
-        if (resume.linkedin) contactParts.push(escapeHTML(resume.linkedin));
+        if (email) contactParts.push(escapeHTML(email));
+        if (phone) contactParts.push(escapeHTML(phone));
+        if (location) contactParts.push(escapeHTML(location));
+        if (linkedin) contactParts.push(escapeHTML(linkedin));
+        if (website) contactParts.push(escapeHTML(website));
         if (contactParts.length > 0) {
             html += '<div class="resume-contact">' + contactParts.join(' <span style="color:#6c5ce7">•</span> ') + '</div>';
         }
 
         // Professional Summary
-        if (resume.professional_summary) {
+        if (summary) {
             html += '<h2>Professional Summary</h2>';
-            html += '<p class="resume-summary">' + escapeHTML(resume.professional_summary) + '</p>';
+            html += '<p class="resume-summary">' + escapeHTML(summary) + '</p>';
         }
 
         // Experience
-        if (resume.experience && resume.experience.length > 0) {
+        if (expList && expList.length > 0) {
             html += '<h2>Professional Experience</h2>';
-            resume.experience.forEach(function (exp) {
+            expList.forEach(function (exp) {
+                var expTitle = exp.title || exp.role || exp.position || '';
+                var expCompany = exp.company || exp.employer || exp.organization || '';
+                var expDates = exp.dates || exp.date_range || '';
+                if (!expDates && (exp.start_date || exp.startDate)) {
+                    expDates = (exp.start_date || exp.startDate || '') + ' — ' + (exp.end_date || exp.endDate || exp.current_date || 'Present');
+                }
+                var expBullets = exp.bullets || exp.achievements || exp.highlights || [];
+                var expDesc = exp.description || exp.desc || '';
+
                 html += '<div class="resume-entry">';
                 html += '<div class="resume-entry-header">';
-                html += '<span class="resume-entry-title">' + escapeHTML(exp.title || '') + '</span>';
-                if (exp.company) {
-                    html += ' <span style="color:#a29bfe">at</span> <span class="resume-entry-company">' + escapeHTML(exp.company) + '</span>';
+                html += '<span class="resume-entry-title">' + escapeHTML(expTitle || 'Position') + '</span>';
+                if (expCompany) {
+                    html += ' <span style="color:#a29bfe">at</span> <span class="resume-entry-company">' + escapeHTML(expCompany) + '</span>';
                 }
                 html += '</div>';
-                if (exp.dates) {
-                    html += '<div class="resume-entry-dates">' + escapeHTML(exp.dates) + '</div>';
+                if (expDates) {
+                    html += '<div class="resume-entry-dates">' + escapeHTML(expDates) + '</div>';
                 }
-                if (exp.bullets && exp.bullets.length > 0) {
+                if (expBullets && expBullets.length > 0) {
                     html += '<ul class="resume-bullets">';
-                    exp.bullets.forEach(function (b) {
+                    expBullets.forEach(function (b) {
                         html += '<li>' + escapeHTML(b) + '</li>';
                     });
                     html += '</ul>';
-                } else if (exp.description) {
-                    html += '<p>' + escapeHTML(exp.description) + '</p>';
+                } else if (expDesc) {
+                    // Split description into lines/bullets
+                    var lines = expDesc.split('\n').filter(function(l) { return l.trim().length > 0; });
+                    if (lines.length > 1) {
+                        html += '<ul class="resume-bullets">';
+                        lines.forEach(function (line) {
+                            html += '<li>' + escapeHTML(line.trim().replace(/^[-•*]\s*/, '')) + '</li>';
+                        });
+                        html += '</ul>';
+                    } else {
+                        html += '<p>' + escapeHTML(expDesc) + '</p>';
+                    }
                 }
                 html += '</div>';
             });
         }
 
         // Education
-        if (resume.education && resume.education.length > 0) {
+        if (eduList && eduList.length > 0) {
             html += '<h2>Education</h2>';
-            resume.education.forEach(function (edu) {
+            eduList.forEach(function (edu) {
+                var eduDegree = edu.degree || edu.qualification || edu.major || '';
+                var eduSchool = edu.school || edu.university || edu.institution || edu.college || '';
+                var eduDates = edu.dates || edu.date_range || edu.year || '';
+                if (!eduDates && (edu.start_date || edu.startDate)) {
+                    eduDates = (edu.start_date || edu.startDate || '') + ' — ' + (edu.end_date || edu.endDate || edu.graduation_year || '');
+                }
+                var eduGpa = edu.gpa || edu.grade || '';
+
                 html += '<div class="resume-entry">';
                 html += '<div class="resume-entry-header">';
-                html += '<span class="resume-entry-title">' + escapeHTML(edu.degree || '') + '</span>';
-                if (edu.school) {
-                    html += ' <span style="color:#a29bfe">—</span> ' + escapeHTML(edu.school);
+                html += '<span class="resume-entry-title">' + escapeHTML(eduDegree || 'Degree') + '</span>';
+                if (eduSchool) {
+                    html += ' <span style="color:#a29bfe">—</span> ' + escapeHTML(eduSchool);
                 }
                 html += '</div>';
                 var eduDetails = [];
-                if (edu.dates) eduDetails.push(escapeHTML(edu.dates));
-                if (edu.gpa) eduDetails.push('GPA: ' + escapeHTML(edu.gpa));
+                if (eduDates) eduDetails.push(escapeHTML(eduDates));
+                if (eduGpa) eduDetails.push('GPA: ' + escapeHTML(eduGpa));
                 if (eduDetails.length > 0) {
                     html += '<div class="resume-entry-dates">' + eduDetails.join(' | ') + '</div>';
+                }
+                if (edu.field_of_study || edu.major) {
+                    html += '<p>' + escapeHTML(edu.field_of_study || edu.major) + '</p>';
                 }
                 html += '</div>';
             });
         }
 
         // Skills
-        if (resume.skills && resume.skills.length > 0) {
+        if (skillsList && skillsList.length > 0) {
             html += '<h2>Skills</h2>';
             html += '<div class="resume-skills-list">';
-            resume.skills.forEach(function (skill) {
+            skillsList.forEach(function (skill) {
                 html += '<span class="resume-skill">' + escapeHTML(skill) + '</span>';
+            });
+            html += '</div>';
+        }
+
+        // Additional sections (certifications, languages, etc.)
+        if (resume.certifications && resume.certifications.length > 0) {
+            html += '<h2>Certifications</h2>';
+            html += '<ul>';
+            resume.certifications.forEach(function (c) {
+                html += '<li>' + escapeHTML(typeof c === 'string' ? c : (c.name + (c.date ? ' (' + c.date + ')' : ''))) + '</li>';
+            });
+            html += '</ul>';
+        }
+        if (resume.languages && resume.languages.length > 0) {
+            html += '<h2>Languages</h2>';
+            html += '<div class="resume-skills-list">';
+            resume.languages.forEach(function (l) {
+                html += '<span class="resume-skill">' + escapeHTML(typeof l === 'string' ? l : (l.name + (l.level ? ' (' + l.level + ')' : ''))) + '</span>';
             });
             html += '</div>';
         }
@@ -1357,17 +1431,18 @@
         var atsValue = $('#matchAtsValue');
         if (atsValue) atsValue.textContent = extractScore(analysis.ats_pass_probability) + '%';
 
-        // Keyword analysis
-        renderKeywordTags('keywordsMatching', analysis.keyword_analysis && analysis.keyword_analysis.matching, 'matching');
-        renderKeywordTags('keywordsMissing', analysis.keyword_analysis && analysis.keyword_analysis.missing, 'missing');
-        renderKeywordTags('keywordsOptional', analysis.keyword_analysis && analysis.keyword_analysis.optional, 'optional');
+        // Keyword analysis — API returns matching_keywords, missing_keywords, optional_keywords
+        var kw = analysis.keyword_analysis || {};
+        renderKeywordTags('keywordsMatching', kw.matching_keywords || kw.matching, 'matching');
+        renderKeywordTags('keywordsMissing', kw.missing_keywords || kw.missing, 'missing');
+        renderKeywordTags('keywordsOptional', kw.optional_keywords || kw.optional, 'optional');
 
-        // Skills match — handle both arrays and objects
+        // Skills match — handle both arrays and objects with score/matched/missing
         var skillsMatch = analysis.skills_match;
         if (skillsMatch && typeof skillsMatch === 'object' && !Array.isArray(skillsMatch)) {
-            renderKeywordTags('skillsMatched', skillsMatch.matched, 'matching');
-            renderKeywordTags('skillsMissing', skillsMatch.missing, 'missing');
-            renderKeywordTags('skillsTransferable', skillsMatch.transferable, 'optional');
+            renderKeywordTags('skillsMatched', skillsMatch.matched_skills || skillsMatch.matched, 'matching');
+            renderKeywordTags('skillsMissing', skillsMatch.missing_skills || skillsMatch.missing, 'missing');
+            renderKeywordTags('skillsTransferable', skillsMatch.transferable_skills || skillsMatch.transferable, 'optional');
         }
 
         // Priority improvements

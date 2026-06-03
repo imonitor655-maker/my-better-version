@@ -178,7 +178,7 @@ def score_resume(resume_text):
                 {"role": "user", "content": prompt}
             ],
             temperature=0.3,
-            max_tokens=2000
+            max_tokens=3000
         )
         
         content = response.choices[0].message.content.strip()

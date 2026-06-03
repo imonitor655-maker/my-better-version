@@ -4,58 +4,23 @@ from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY', ''))
 
-SYSTEM_PROMPT = """You are an expert resume writer and career coach. You craft compelling, ATS-optimized resumes that highlight a candidate's strengths and achievements. 
+SYSTEM_PROMPT = """You are an expert resume writer and career coach with 15+ years of experience. You craft compelling, ATS-optimized resumes that highlight a candidate's strengths and achievements.
 
 Rules:
-- Use strong action verbs (Led, Developed, Implemented, Achieved)
+- Use strong action verbs (Led, Developed, Implemented, Achieved, Orchestrated, Transformed)
 - Quantify achievements where possible (numbers, percentages, dollar amounts)
 - Keep bullet points concise (1-2 lines max)
 - Tailor content to the target job title/industry
 - Include relevant keywords for ATS systems
-- Format output as structured JSON
-- Do NOT invent fake experiences, skills, or education — only use what the user provided"""
+- Do NOT invent fake experiences, skills, or education — only use what the user provided
+- Professional summary must be 3-4 powerful sentences
+- Return ONLY valid JSON, no markdown, no extra text"""
 
 PLAN_LIMITS = {
     'free': {'max_resumes': 1, 'templates': ['modern'], 'cover_letter': False},
     'pro': {'max_resumes': 999, 'templates': ['modern', 'classic', 'minimal'], 'cover_letter': True},
     'lifetime': {'max_resumes': 999, 'templates': ['modern', 'classic', 'minimal'], 'cover_letter': True},
 }
-
-USER_PROMPT = """Create a professional resume based on the following information. Return ONLY valid JSON with this exact structure:
-
-{
-  "full_name": "string",
-  "email": "string",
-  "phone": "string",
-  "location": "string",
-  "linkedin": "string",
-  "professional_summary": "string - 3-4 powerful sentences",
-  "experience": [
-    {
-      "company": "string",
-      "title": "string",
-      "dates": "string",
-      "bullets": ["string - achievement-focused bullet points"]
-    }
-  ],
-  "education": [
-    {
-      "school": "string",
-      "degree": "string",
-      "dates": "string",
-      "gpa": "string or null"
-    }
-  ],
-  "skills": ["string - relevant technical and soft skills"],
-  "template": "modern|classic|minimal"
-}
-
-Target Job: {target_title}
-Target Industry: {target_industry}
-Years of Experience: {years_experience}
-
-User's Information:
-{user_data}"""
 
 
 def generate_resume(user_data):
@@ -68,15 +33,100 @@ def generate_resume(user_data):
     if template not in limits['templates']:
         template = limits['templates'][0]
     
-    # Build the user data string from the form input
-    data_str = json.dumps(user_data, indent=2)
+    # Extract fields from nested form data (frontend sends nested structure)
+    personal = user_data.get('personal_info', {})
+    full_name = personal.get('full_name', '')
+    email = personal.get('email', '')
+    phone = personal.get('phone', '')
+    location = personal.get('location', '')
+    linkedin = personal.get('linkedin', '')
     
-    prompt = USER_PROMPT.format(
-        target_title=user_data.get('target_title', 'Not specified'),
-        target_industry=user_data.get('target_industry', 'Not specified'),
-        years_experience=user_data.get('years_experience', 'Not specified'),
-        user_data=data_str
-    )
+    target = user_data.get('target', {})
+    target_title = target.get('job_title', 'Not specified')
+    target_industry = target.get('industry', 'Not specified')
+    years_experience = target.get('years_experience', 'Not specified')
+    job_description = target.get('job_description', '')
+    
+    experience = user_data.get('experience', [])
+    education = user_data.get('education', [])
+    skills = user_data.get('skills', [])
+    
+    # Build a clean, readable summary of user data for the AI
+    user_summary = f"""
+NAME: {full_name or 'Not provided'}
+EMAIL: {email or 'Not provided'}
+PHONE: {phone or 'Not provided'}
+LOCATION: {location or 'Not provided'}
+LINKEDIN: {linkedin or 'Not provided'}
+
+TARGET JOB TITLE: {target_title}
+TARGET INDUSTRY: {target_industry}
+YEARS OF EXPERIENCE: {years_experience}
+TARGET JOB DESCRIPTION: {job_description or 'Not provided'}
+
+WORK EXPERIENCE:
+"""
+    for i, exp in enumerate(experience):
+        user_summary += f"\nExperience {i+1}:\n"
+        user_summary += f"  Company: {exp.get('company', '')}\n"
+        user_summary += f"  Title: {exp.get('title', '')}\n"
+        user_summary += f"  Dates: {exp.get('startDate', '')} to {exp.get('endDate', '')}\n"
+        user_summary += f"  Description: {exp.get('description', '')}\n"
+    
+    user_summary += "\nEDUCATION:\n"
+    for i, edu in enumerate(education):
+        user_summary += f"\nEducation {i+1}:\n"
+        user_summary += f"  School: {edu.get('school', '')}\n"
+        user_summary += f"  Degree: {edu.get('degree', '')}\n"
+        user_summary += f"  Dates: {edu.get('startDate', '')} to {edu.get('endDate', '')}\n"
+        user_summary += f"  GPA: {edu.get('gpa', '')}\n"
+    
+    user_summary += f"\nSKILLS: {', '.join(skills) if skills else 'None listed'}"
+    
+    prompt = f"""Create a professional, ATS-optimized resume based on the following information.
+
+Target Job: {target_title}
+Target Industry: {target_industry}
+Years of Experience: {years_experience}
+
+User's Information:
+{user_summary}
+
+Return ONLY valid JSON with this exact structure:
+{{
+  "full_name": "string",
+  "email": "string",
+  "phone": "string",
+  "location": "string",
+  "linkedin": "string",
+  "professional_summary": "string - 3-4 powerful sentences summarizing the candidate",
+  "experience": [
+    {{
+      "company": "string",
+      "title": "string",
+      "dates": "string - e.g. Jan 2020 - Present",
+      "bullets": ["string - achievement-focused bullet point with action verbs and numbers"]
+    }}
+  ],
+  "education": [
+    {{
+      "school": "string",
+      "degree": "string",
+      "dates": "string",
+      "gpa": "string or null"
+    }}
+  ],
+  "skills": ["string - relevant technical and soft skills"],
+  "template": "modern"
+}}
+
+IMPORTANT:
+- Enhance bullet points with strong action verbs and quantify achievements
+- Reorder experience by relevance to target job (most recent/relevant first)
+- Add a compelling professional summary that bridges their experience to the target role
+- If the user's original descriptions are weak, improve them while keeping facts truthful
+- Skills should include both what the user listed and relevant skills implied by their experience
+- Return ONLY the JSON, nothing else"""
     
     try:
         response = client.chat.completions.create(
@@ -86,22 +136,35 @@ def generate_resume(user_data):
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=2000
+            max_tokens=4000
         )
         
         content = response.choices[0].message.content.strip()
         
         # Clean up potential markdown code block wrappers
         if content.startswith('```'):
-            content = content.split('\n', 1)[1] if '\n' in content else content[3:]
-        if content.endswith('```'):
-            content = content[:-3]
-        if content.startswith('json'):
-            content = content[4:]
+            lines = content.split('\n')
+            # Remove first line (```json or ```)
+            lines = lines[1:]
+            # Remove last line if it's ```
+            if lines and lines[-1].strip() == '```':
+                lines = lines[:-1]
+            content = '\n'.join(lines)
         content = content.strip()
         
         result = json.loads(content)
         result['template'] = template
+        
+        # Ensure all expected fields exist
+        result.setdefault('full_name', full_name)
+        result.setdefault('email', email)
+        result.setdefault('phone', phone)
+        result.setdefault('location', location)
+        result.setdefault('linkedin', linkedin)
+        result.setdefault('professional_summary', '')
+        result.setdefault('experience', [])
+        result.setdefault('education', [])
+        result.setdefault('skills', [])
         
         return {
             'success': True,
@@ -122,7 +185,7 @@ def generate_resume(user_data):
             result['template'] = template
             return {'success': True, 'resume': result}
         except (ValueError, json.JSONDecodeError):
-            return {'success': False, 'error': f'Failed to parse AI response: {str(e)}'}
+            return {'success': False, 'error': f'Failed to parse AI response: {str(e)}', 'raw': content[:500]}
     
     except Exception as e:
         return {'success': False, 'error': str(e)}
@@ -131,15 +194,20 @@ def generate_resume(user_data):
 def generate_cover_letter(user_data):
     """Generate an AI cover letter based on resume data."""
     
-    prompt = f"""Write a compelling cover letter for a {user_data.get('target_title', 'position')} role in {user_data.get('target_industry', 'the industry')}.
+    personal = user_data.get('personal_info', {})
+    target = user_data.get('target', {})
+    experience = user_data.get('experience', [])
+    skills = user_data.get('skills', [])
+    
+    prompt = f"""Write a compelling cover letter for a {target.get('job_title', 'position')} role in {target.get('industry', 'the industry')}.
 
 The applicant's key experience includes:
-{json.dumps(user_data.get('experience', []), indent=2)}
+{json.dumps(experience, indent=2)}
 
-Key skills: {', '.join(user_data.get('skills', []))}
+Key skills: {', '.join(skills)}
 
 Write a professional, engaging cover letter that connects their experience to the target role. Keep it under 300 words. Return ONLY the cover letter text, no JSON formatting."""
-
+    
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
