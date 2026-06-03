@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder — My Better Version</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="builder-page">
+
+    <!-- Sticky Navbar -->
+    <nav class="navbar navbar-sticky">
+        <div class="container nav-container">
+            <a href="/" class="nav-logo">
+                <svg class="logo-icon" viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#6c5ce7"/><path d="M9 16L14 21L23 11" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span>My Better Version</span>
+            </a>
+            <div class="nav-links">
+                <a href="/" class="btn btn-ghost btn-sm">Home</a>
+                <a href="/pricing" class="btn btn-ghost btn-sm">Pricing</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Builder Layout -->
+    <div class="builder-layout">
+        <!-- Left Panel: Form -->
+        <div class="builder-form-panel">
+            <!-- Step Indicator -->
+            <div class="step-indicator">
+                <div class="step-ind-item active" data-step="1">
+                    <div class="step-ind-circle">1</div>
+                    <span>Info</span>
+                </div>
+                <div class="step-ind-line"></div>
+                <div class="step-ind-item" data-step="2">
+                    <div class="step-ind-circle">2</div>
+                    <span>Experience</span>
+                </div>
+                <div class="step-ind-line"></div>
+                <div class="step-ind-item" data-step="3">
+                    <div class="step-ind-circle">3</div>
+                    <span>Education</span>
+                </div>
+                <div class="step-ind-line"></div>
+                <div class="step-ind-item" data-step="4">
+                    <div class="step-ind-circle">4</div>
+                    <span>Skills</span>
+                </div>
+                <div class="step-ind-line"></div>
+                <div class="step-ind-item" data-step="5">
+                    <div class="step-ind-circle">5</div>
+                    <span>Target</span>
+                </div>
+                <div class="step-ind-line"></div>
+                <div class="step-ind-item" data-step="6">
+                    <div class="step-ind-circle">6</div>
+                    <span>Template</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Personal Info -->
+            <div class="form-step active" id="step-1">
+                <div class="form-step-header">
+                    <h2>Personal Information</h2>
+                    <p>Let's start with the basics. This information goes at the top of your resume.</p>
+                </div>
+                <div class="form-group">
+                    <label for="fullName">Full Name *</label>
+                    <input type="text" id="fullName" name="fullName" placeholder="John Doe" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" name="email" placeholder="john@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location">Location</label>
+                        <input type="text" id="location" name="location" placeholder="San Francisco, CA">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn</label>
+                        <input type="url" id="linkedin" name="linkedin" placeholder="linkedin.com/in/johndoe">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <div></div>
+                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Work Experience -->
+            <div class="form-step" id="step-2">
+                <div class="form-step-header">
+                    <h2>Work Experience</h2>
+                    <p>Add your most recent positions. Focus on achievements and impact.</p>
+                </div>
+                <div id="experienceEntries">
+                    <div class="entry-card" data-entry="experience-0">
+                        <div class="entry-header">
+                            <span class="entry-title">Position 1</span>
+                            <button class="btn-icon btn-remove-entry" onclick="removeEntry(this)" title="Remove" style="visibility:hidden">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4.257 4.757a.75.75 0 0 1 1.043-.216l12 9a.75.75 0 0 1-.827 1.252l-12-9a.75.75 0 0 1-.216-1.036Zm8.03 5.47a.75.75 0 0 1 .827-.208l3 1.5a.75.75 0 1 1-.671 1.342l-3-1.5a.75.75 0 0 1-.156-1.134Z" clip-rule="evenodd"/></svg>
+                            </button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Company</label>
+                                <input type="text" name="company" placeholder="Acme Inc.">
+                            </div>
+                            <div class="form-group">
+                                <label>Job Title</label>
+                                <input type="text" name="jobTitle" placeholder="Software Engineer">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input type="text" name="startDate" placeholder="Jan 2022">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <input type="text" name="endDate" placeholder="Present">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" rows="4" placeholder="Describe your key responsibilities and achievements..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-add-entry" onclick="addExperience()">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+                    Add Another Position
+                </button>
+                <div class="form-actions">
+                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Education -->
+            <div class="form-step" id="step-3">
+                <div class="form-step-header">
+                    <h2>Education</h2>
+                    <p>Add your educational background, starting with the most recent.</p>
+                </div>
+                <div id="educationEntries">
+                    <div class="entry-card" data-entry="education-0">
+                        <div class="entry-header">
+                            <span class="entry-title">Education 1</span>
+                            <button class="btn-icon btn-remove-entry" onclick="removeEntry(this)" title="Remove" style="visibility:hidden">
+                                <svg viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>
+                            </button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>School / University</label>
+                                <input type="text" name="school" placeholder="Stanford University">
+                            </div>
+                            <div class="form-group">
+                                <label>Degree</label>
+                                <input type="text" name="degree" placeholder="B.S. Computer Science">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input type="text" name="startDate" placeholder="Sep 2018">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <input type="text" name="endDate" placeholder="Jun 2022">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>GPA (optional)</label>
+                            <input type="text" name="gpa" placeholder="3.8 / 4.0">
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-add-entry" onclick="addEducation()">
+                    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+                    Add Another Education
+                </button>
+                <div class="form-actions">
+                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Skills -->
+            <div class="form-step" id="step-4">
+                <div class="form-step-header">
+                    <h2>Skills</h2>
+                    <p>Type a skill and press Enter to add it. Add as many as relevant.</p>
+                </div>
+                <div class="form-group">
+                    <label>Add Skills</label>
+                    <div class="tag-input-wrapper">
+                        <div class="tag-list" id="skillTags"></div>
+                        <input type="text" id="skillInput" placeholder="Type a skill and press Enter...">
+                    </div>
+                </div>
+                <div class="skill-suggestions">
+                    <span class="suggestion-label">Suggestions:</span>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">JavaScript</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Python</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">React</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Node.js</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">SQL</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">AWS</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Docker</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Git</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Agile</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Leadership</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Communication</button>
+                    <button class="suggestion-chip" onclick="addSuggestion(this)">Problem Solving</button>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 5: Job Target -->
+            <div class="form-step" id="step-5">
+                <div class="form-step-header">
+                    <h2>Job Target</h2>
+                    <p>Tell us about the job you're applying for so we can tailor your resume.</p>
+                </div>
+                <div class="form-group">
+                    <label for="targetJob">Target Job Title *</label>
+                    <input type="text" id="targetJob" name="targetJob" placeholder="Senior Software Engineer" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="industry">Industry</label>
+                        <input type="text" id="industry" name="industry" placeholder="Technology">
+                    </div>
+                    <div class="form-group">
+                        <label for="yearsExperience">Years of Experience</label>
+                        <input type="text" id="yearsExperience" name="yearsExperience" placeholder="5">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="jobDescription">Job Description (optional)</label>
+                    <textarea id="jobDescription" name="jobDescription" rows="4" placeholder="Paste the job description here for better AI optimization..."></textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+                    <button class="btn btn-primary" onclick="nextStep()">Continue →</button>
+                </div>
+            </div>
+
+            <!-- Step 6: Template Selection -->
+            <div class="form-step" id="step-6">
+                <div class="form-step-header">
+                    <h2>Choose a Template</h2>
+                    <p>Select a design that matches your style. You can always change it later.</p>
+                </div>
+                <div class="template-grid">
+                    <div class="template-card" data-template="modern" onclick="selectTemplate('modern')">
+                        <div class="template-preview template-modern">
+                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
+                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                        </div>
+                        <div class="template-label">
+                            <input type="radio" name="template" value="modern" checked>
+                            <span>Modern</span>
+                            <span class="template-badge">Recommended</span>
+                        </div>
+                    </div>
+                    <div class="template-card" data-template="classic" onclick="selectTemplate('classic')">
+                        <div class="template-preview template-classic">
+                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
+                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                        </div>
+                        <div class="template-label">
+                            <input type="radio" name="template" value="classic">
+                            <span>Classic</span>
+                        </div>
+                    </div>
+                    <div class="template-card" data-template="minimal" onclick="selectTemplate('minimal')">
+                        <div class="template-preview template-minimal">
+                            <div class="tp-header"><div class="tp-name">Jane Smith</div><div class="tp-title">Software Engineer</div></div>
+                            <div class="tp-body"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-section"><div class="tp-line"></div><div class="tp-line short"></div><div class="tp-line"></div></div></div>
+                        </div>
+                        <div class="template-label">
+                            <input type="radio" name="template" value="minimal">
+                            <span>Minimal</span>
+                            <span class="pro-badge">Pro</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-ghost" onclick="prevStep()">← Back</button>
+                    <button class="btn btn-primary btn-generate" id="generateBtn" onclick="generateResume()">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>
+                        Generate Resume
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Preview -->
+        <div class="builder-preview-panel">
+            <div class="preview-header">
+                <h3>Resume Preview</h3>
+                <div class="preview-actions" id="previewActions" style="display:none">
+                    <button class="btn btn-primary btn-sm" id="downloadPdfBtn" onclick="downloadPDF()">
+                        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                        Download PDF
+                    </button>
+                </div>
+            </div>
+            <div class="preview-content" id="resumePreview">
+                <!-- Live preview or AI-generated resume appears here -->
+                <div class="preview-placeholder">
+                    <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M6 8h36v32H6z" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M14 18h20M14 24h16M14 30h12" stroke-linecap="round"/>
+                    </svg>
+                    <p>Fill in your details to see a live preview of your resume.</p>
+                    <p class="preview-hint">Your AI-generated resume will appear here after completing all steps.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay" style="display:none">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Generating your resume with AI...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
