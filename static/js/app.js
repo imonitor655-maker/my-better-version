@@ -498,7 +498,87 @@
         var preview = $('#resumePreview');
         if (!preview) return;
 
-        var html = data.resume_html || data.html || JSON.stringify(data, null, 2);
+        // API returns {success: true, resume: {...}} — the resume is a JSON object
+        var resume = data.resume || data;
+        generatedResumeData = resume;
+
+        var html = '';
+
+        // Name & Contact
+        html += '<h1>' + escapeHTML(resume.full_name || 'Your Name') + '</h1>';
+        var contactParts = [];
+        if (resume.email) contactParts.push(escapeHTML(resume.email));
+        if (resume.phone) contactParts.push(escapeHTML(resume.phone));
+        if (resume.location) contactParts.push(escapeHTML(resume.location));
+        if (resume.linkedin) contactParts.push(escapeHTML(resume.linkedin));
+        if (contactParts.length > 0) {
+            html += '<div class="resume-contact">' + contactParts.join(' <span style="color:#6c5ce7">•</span> ') + '</div>';
+        }
+
+        // Professional Summary
+        if (resume.professional_summary) {
+            html += '<h2>Professional Summary</h2>';
+            html += '<p class="resume-summary">' + escapeHTML(resume.professional_summary) + '</p>';
+        }
+
+        // Experience
+        if (resume.experience && resume.experience.length > 0) {
+            html += '<h2>Professional Experience</h2>';
+            resume.experience.forEach(function (exp) {
+                html += '<div class="resume-entry">';
+                html += '<div class="resume-entry-header">';
+                html += '<span class="resume-entry-title">' + escapeHTML(exp.title || '') + '</span>';
+                if (exp.company) {
+                    html += ' <span style="color:#a29bfe">at</span> <span class="resume-entry-company">' + escapeHTML(exp.company) + '</span>';
+                }
+                html += '</div>';
+                if (exp.dates) {
+                    html += '<div class="resume-entry-dates">' + escapeHTML(exp.dates) + '</div>';
+                }
+                if (exp.bullets && exp.bullets.length > 0) {
+                    html += '<ul class="resume-bullets">';
+                    exp.bullets.forEach(function (b) {
+                        html += '<li>' + escapeHTML(b) + '</li>';
+                    });
+                    html += '</ul>';
+                } else if (exp.description) {
+                    html += '<p>' + escapeHTML(exp.description) + '</p>';
+                }
+                html += '</div>';
+            });
+        }
+
+        // Education
+        if (resume.education && resume.education.length > 0) {
+            html += '<h2>Education</h2>';
+            resume.education.forEach(function (edu) {
+                html += '<div class="resume-entry">';
+                html += '<div class="resume-entry-header">';
+                html += '<span class="resume-entry-title">' + escapeHTML(edu.degree || '') + '</span>';
+                if (edu.school) {
+                    html += ' <span style="color:#a29bfe">—</span> ' + escapeHTML(edu.school);
+                }
+                html += '</div>';
+                var eduDetails = [];
+                if (edu.dates) eduDetails.push(escapeHTML(edu.dates));
+                if (edu.gpa) eduDetails.push('GPA: ' + escapeHTML(edu.gpa));
+                if (eduDetails.length > 0) {
+                    html += '<div class="resume-entry-dates">' + eduDetails.join(' | ') + '</div>';
+                }
+                html += '</div>';
+            });
+        }
+
+        // Skills
+        if (resume.skills && resume.skills.length > 0) {
+            html += '<h2>Skills</h2>';
+            html += '<div class="resume-skills-list">';
+            resume.skills.forEach(function (skill) {
+                html += '<span class="resume-skill">' + escapeHTML(skill) + '</span>';
+            });
+            html += '</div>';
+        }
+
         preview.innerHTML = '<div class="resume-preview-content">' + html + '</div>';
     }
 
@@ -982,6 +1062,14 @@
         requestAnimationFrame(step);
     }
 
+    // Helper: extract numeric score from API response (handles both number and {score: N} object)
+    function extractScore(val) {
+        if (typeof val === 'number') return val;
+        if (val && typeof val === 'object' && typeof val.score === 'number') return val.score;
+        if (val && typeof val.score === 'string') return parseInt(val.score, 10) || 0;
+        return 0;
+    }
+
     function renderScorePanel(score) {
         var panel = $('#scorePanel');
         if (!panel) return;
@@ -992,7 +1080,7 @@
         var circle = $('#scoreCircle');
         var numberEl = $('#scoreNumber');
         var ringProgress = $('#scoreRingProgress');
-        var overall = score.overall_score || 0;
+        var overall = extractScore(score.overall_score);
 
         // Remove old color classes
         circle.className = 'score-circle';
@@ -1008,40 +1096,42 @@
         // Animate number
         if (numberEl) animateNumber(numberEl, overall);
 
-        // Sub-scores
+        // Sub-scores — API returns objects like {score: N, issues: [...], passes: [...]}
         var barsContainer = $('#scoreBars');
         if (barsContainer) {
             var subScores = [
-                { label: 'ATS Compatibility', value: score.ats_compatibility || 0 },
-                { label: 'Content Quality', value: score.content_quality || 0 },
-                { label: 'Completeness', value: score.completeness || 0 },
-                { label: 'Keyword Power', value: score.keyword_power || 0 },
-                { label: 'Impact Score', value: score.impact_score || 0 }
+                { label: 'ATS Compatibility', key: 'ats_compatibility' },
+                { label: 'Content Quality', key: 'content_quality' },
+                { label: 'Completeness', key: 'completeness' },
+                { label: 'Keyword Power', key: 'keyword_power' },
+                { label: 'Impact Score', key: 'impact_score' }
             ];
 
             barsContainer.innerHTML = '';
             subScores.forEach(function (sub) {
+                var raw = score[sub.key];
+                var numVal = extractScore(raw);
                 var bar = document.createElement('div');
                 bar.className = 'score-bar';
                 bar.setAttribute('data-label', sub.label);
-                var colorClass = getScoreColorClass(sub.value);
+                var colorClass = getScoreColorClass(numVal);
                 bar.innerHTML =
                     '<div class="score-bar-header">' +
                     '  <span class="score-bar-label">' + escapeHTML(sub.label) + '</span>' +
-                    '  <span class="score-bar-value ' + colorClass + '">' + sub.value + '%</span>' +
+                    '  <span class="score-bar-value ' + colorClass + '">' + numVal + '%</span>' +
                     '</div>' +
                     '<div class="score-bar-track">' +
                     '  <div class="score-bar-fill ' + colorClass + '" style="width: 0%"></div>' +
                     '</div>';
                 bar.addEventListener('click', function () {
-                    toggleScoreDetails(sub.label, score);
+                    toggleScoreDetails(sub.label, sub.key, score);
                 });
                 barsContainer.appendChild(bar);
 
                 // Animate bar fill
                 setTimeout(function () {
                     var fill = bar.querySelector('.score-bar-fill');
-                    if (fill) fill.style.width = sub.value + '%';
+                    if (fill) fill.style.width = numVal + '%';
                 }, 200);
             });
         }
@@ -1058,7 +1148,7 @@
         }
     }
 
-    function toggleScoreDetails(label, score) {
+    function toggleScoreDetails(label, key, score) {
         var details = $('#scoreDetails');
         var title = $('#scoreDetailsTitle');
         var list = $('#scoreDetailsList');
@@ -1072,35 +1162,105 @@
         if (title) title.textContent = label;
         list.innerHTML = '';
 
-        // Show available details for this sub-score
-        var key = label.toLowerCase().replace(/\s+/g, '_');
-        var detailData = score[key + '_details'] || score[key] || null;
+        // Get the raw data — it's an object like {score: N, issues: [...], passes: [...]}
+        var raw = score[key];
 
-        if (detailData) {
-            if (Array.isArray(detailData)) {
-                detailData.forEach(function (item) {
+        if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+            // Show issues
+            if (raw.issues && Array.isArray(raw.issues)) {
+                raw.issues.forEach(function (item) {
                     var li = document.createElement('li');
-                    if (typeof item === 'string') {
-                        li.textContent = item;
-                    } else if (item.status === 'pass') {
-                        li.className = 'pass';
-                        li.textContent = '✓ ' + (item.text || item.message || JSON.stringify(item));
-                    } else if (item.status === 'fail') {
-                        li.className = 'fail';
-                        li.textContent = '✗ ' + (item.text || item.message || JSON.stringify(item));
-                    } else {
-                        li.textContent = typeof item === 'object' ? JSON.stringify(item) : String(item);
-                    }
+                    li.className = 'fail';
+                    li.textContent = '✗ ' + (typeof item === 'string' ? item : (item.text || item.message || JSON.stringify(item)));
                     list.appendChild(li);
                 });
-            } else if (typeof detailData === 'string') {
+            }
+            // Show passes
+            if (raw.passes && Array.isArray(raw.passes)) {
+                raw.passes.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'pass';
+                    li.textContent = '✓ ' + (typeof item === 'string' ? item : (item.text || item.message || JSON.stringify(item)));
+                    list.appendChild(li);
+                });
+            }
+            // Show strengths if present
+            if (raw.strengths && Array.isArray(raw.strengths)) {
+                raw.strengths.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'pass';
+                    li.textContent = '✓ ' + (typeof item === 'string' ? item : (item.text || item.message || JSON.stringify(item)));
+                    list.appendChild(li);
+                });
+            }
+            // Show weaknesses if present
+            if (raw.weaknesses && Array.isArray(raw.weaknesses)) {
+                raw.weaknesses.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'fail';
+                    li.textContent = '✗ ' + (typeof item === 'string' ? item : (item.text || item.message || JSON.stringify(item)));
+                    list.appendChild(li);
+                });
+            }
+            // Show missing/present sections
+            if (raw.missing_sections && Array.isArray(raw.missing_sections)) {
+                raw.missing_sections.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'fail';
+                    li.textContent = '✗ Missing: ' + (typeof item === 'string' ? item : JSON.stringify(item));
+                    list.appendChild(li);
+                });
+            }
+            if (raw.present_sections && Array.isArray(raw.present_sections)) {
+                raw.present_sections.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'pass';
+                    li.textContent = '✓ ' + (typeof item === 'string' ? item : JSON.stringify(item));
+                    list.appendChild(li);
+                });
+            }
+            // Show keyword lists
+            if (raw.strong_keywords && Array.isArray(raw.strong_keywords)) {
+                raw.strong_keywords.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'pass';
+                    li.textContent = '✓ ' + item;
+                    list.appendChild(li);
+                });
+            }
+            if (raw.suggested_keywords && Array.isArray(raw.suggested_keywords)) {
+                raw.suggested_keywords.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'fail';
+                    li.textContent = '+ Suggest adding: ' + item;
+                    list.appendChild(li);
+                });
+            }
+            if (raw.quantified && Array.isArray(raw.quantified)) {
+                raw.quantified.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'pass';
+                    li.textContent = '✓ ' + (typeof item === 'string' ? item : JSON.stringify(item));
+                    list.appendChild(li);
+                });
+            }
+            if (raw.needs_quantification && Array.isArray(raw.needs_quantification)) {
+                raw.needs_quantification.forEach(function (item) {
+                    var li = document.createElement('li');
+                    li.className = 'fail';
+                    li.textContent = '+ Add numbers: ' + (typeof item === 'string' ? item : JSON.stringify(item));
+                    list.appendChild(li);
+                });
+            }
+            // If nothing was rendered
+            if (list.children.length === 0) {
                 var li = document.createElement('li');
-                li.textContent = detailData;
+                li.textContent = 'Score: ' + extractScore(raw) + '/100';
                 list.appendChild(li);
             }
         } else {
             var li = document.createElement('li');
-            li.textContent = 'Score: ' + (score[key.replace(/_details$/, '')] || 'N/A') + '/100';
+            li.textContent = 'Score: ' + (typeof raw === 'number' ? raw : 'N/A') + '/100';
             list.appendChild(li);
         }
 
@@ -1176,27 +1336,39 @@
         result.style.display = 'flex';
 
         // Match score
-        var matchScore = analysis.match_score || 0;
+        var matchScore = extractScore(analysis.match_score);
         var matchCircle = $('#matchScoreCircle');
         var matchNumber = $('#matchScoreNumber');
+        var matchRing = $('#matchRingProgress');
         if (matchCircle) {
             matchCircle.className = 'match-score-circle ' + getScoreColorClass(matchScore);
         }
         if (matchNumber) animateNumber(matchNumber, matchScore);
+        // Animate match score ring
+        if (matchRing) {
+            var circumference = 339.29;
+            var offset = circumference - (circumference * matchScore / 100);
+            setTimeout(function () {
+                matchRing.setAttribute('stroke-dashoffset', offset);
+            }, 100);
+        }
 
         // ATS Pass Probability
         var atsValue = $('#matchAtsValue');
-        if (atsValue) atsValue.textContent = (analysis.ats_pass_probability || 0) + '%';
+        if (atsValue) atsValue.textContent = extractScore(analysis.ats_pass_probability) + '%';
 
         // Keyword analysis
         renderKeywordTags('keywordsMatching', analysis.keyword_analysis && analysis.keyword_analysis.matching, 'matching');
         renderKeywordTags('keywordsMissing', analysis.keyword_analysis && analysis.keyword_analysis.missing, 'missing');
         renderKeywordTags('keywordsOptional', analysis.keyword_analysis && analysis.keyword_analysis.optional, 'optional');
 
-        // Skills match
-        renderKeywordTags('skillsMatched', analysis.skills_match && analysis.skills_match.matched, 'matching');
-        renderKeywordTags('skillsMissing', analysis.skills_match && analysis.skills_match.missing, 'missing');
-        renderKeywordTags('skillsTransferable', analysis.skills_match && analysis.skills_match.transferable, 'optional');
+        // Skills match — handle both arrays and objects
+        var skillsMatch = analysis.skills_match;
+        if (skillsMatch && typeof skillsMatch === 'object' && !Array.isArray(skillsMatch)) {
+            renderKeywordTags('skillsMatched', skillsMatch.matched, 'matching');
+            renderKeywordTags('skillsMissing', skillsMatch.missing, 'missing');
+            renderKeywordTags('skillsTransferable', skillsMatch.transferable, 'optional');
+        }
 
         // Priority improvements
         var impList = $('#improvementList');
@@ -1204,9 +1376,17 @@
             impList.innerHTML = '';
             analysis.improvement_priority.forEach(function (imp) {
                 var li = document.createElement('li');
-                var text = typeof imp === 'string' ? imp : (imp.text || imp.description || imp.item || JSON.stringify(imp));
-                var priority = typeof imp === 'object' ? (imp.priority || imp.level || '') : '';
-                li.innerHTML = '<span class="priority-badge ' + priority.toUpperCase() + '">' + (priority || 'MEDIUM') + '</span> ' + escapeHTML(text);
+                if (typeof imp === 'string') {
+                    li.textContent = imp;
+                } else {
+                    var priority = (imp.priority || imp.level || 'MEDIUM').toUpperCase();
+                    var issue = imp.issue || imp.description || imp.text || imp.item || '';
+                    var suggestion = imp.suggestion || '';
+                    var category = imp.category || '';
+                    var text = issue;
+                    if (suggestion) text += ' → ' + suggestion;
+                    li.innerHTML = '<span class="priority-badge ' + priority + '">' + priority + '</span> ' + escapeHTML(text);
+                }
                 impList.appendChild(li);
             });
         }
@@ -1278,8 +1458,8 @@
         // Score flow
         var currentScoreEl = $('#wsCurrentScore');
         var projectedScoreEl = $('#wsProjectedScore');
-        var currentScore = walkthrough.current_score || 0;
-        var projectedScore = walkthrough.projected_score || 0;
+        var currentScore = extractScore(walkthrough.current_score);
+        var projectedScore = extractScore(walkthrough.projected_score);
 
         if (currentScoreEl) {
             currentScoreEl.className = 'ws-score-value ' + getScoreColorClass(currentScore);
