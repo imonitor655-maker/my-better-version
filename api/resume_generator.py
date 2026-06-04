@@ -51,6 +51,9 @@ def generate_resume(user_data):
     education = user_data.get('education', [])
     skills = user_data.get('skills', [])
     
+    # Check if score suggestions were provided (from a previous scoring run)
+    score_suggestions = user_data.get('score_suggestions', {})
+    
     # Build a clean, readable summary of user data for the AI
     user_summary = f"""
 NAME: {full_name or 'Not provided'}
@@ -127,6 +130,40 @@ IMPORTANT:
 - If the user's original descriptions are weak, improve them while keeping facts truthful
 - Skills should include both what the user listed and relevant skills implied by their experience
 - Return ONLY the JSON, nothing else"""
+
+    # If we have score suggestions from a previous scoring run, inject them
+    if score_suggestions:
+        prompt += "\n\nIMPORTANT — The user has already run a resume score analysis. Apply ALL of these suggestions when generating the resume:\n\n"
+        
+        # Quick wins
+        if score_suggestions.get('quick_wins'):
+            prompt += "QUICK WINS TO APPLY:\n"
+            for win in score_suggestions['quick_wins']:
+                prompt += f"  • {win}\n"
+        
+        # Suggested keywords
+        if score_suggestions.get('keyword_power', {}).get('suggested_keywords'):
+            prompt += "\nKEYWORDS TO INCLUDE (from scoring): " + ", ".join(score_suggestions['keyword_power']['suggested_keywords']) + "\n"
+        
+        # Weaknesses to fix
+        if score_suggestions.get('content_quality', {}).get('weaknesses'):
+            prompt += "\nCONTENT QUALITY FIXES:\n"
+            for w in score_suggestions['content_quality']['weaknesses']:
+                prompt += f"  • {w}\n"
+        
+        # Missing sections
+        if score_suggestions.get('completeness', {}).get('missing_sections'):
+            prompt += "\nMISSING SECTIONS TO ADD/IMPROVE:\n"
+            for m in score_suggestions['completeness']['missing_sections']:
+                prompt += f"  • {m}\n"
+        
+        # Needs quantification
+        if score_suggestions.get('impact_score', {}).get('needs_quantification'):
+            prompt += "\nCLAIMS THAT NEED NUMBERS/METRICS:\n"
+            for n in score_suggestions['impact_score']['needs_quantification']:
+                prompt += f"  • {n}\n"
+        
+        prompt += "\nDo NOT mention the scoring analysis in the resume output. Just silently apply all improvements.\n"
     
     try:
         response = client.chat.completions.create(

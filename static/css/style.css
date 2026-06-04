@@ -1768,6 +1768,138 @@ body {
 }
 
 /* ============================================================
+   AI INLINE SUGGESTIONS (on-the-fly UX)
+   ============================================================ */
+
+.ai-hint-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: rgba(30, 144, 255, 0.1);
+  color: var(--accent-light);
+  cursor: pointer;
+  margin-left: 8px;
+  font-size: 14px;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.ai-hint-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(30, 144, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.ai-hint-btn.ai-loading {
+  animation: aiPulse 1s ease infinite;
+  pointer-events: none;
+}
+
+@keyframes aiPulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(30, 144, 255, 0.3); }
+  50% { box-shadow: 0 0 16px rgba(30, 144, 255, 0.6); }
+}
+
+.ai-suggestion-box {
+  background: rgba(30, 144, 255, 0.06);
+  border: 1px solid rgba(30, 144, 255, 0.2);
+  border-radius: var(--radius-btn);
+  padding: 10px 14px;
+  margin-top: 6px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  display: none;
+  animation: suggestionSlideIn 0.3s ease;
+}
+
+.ai-suggestion-box.visible {
+  display: block;
+}
+
+@keyframes suggestionSlideIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-suggestion-box .ai-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.ai-suggestion-box ul {
+  margin: 4px 0 0 0;
+  padding-left: 18px;
+}
+
+.ai-suggestion-box li {
+  margin-bottom: 2px;
+}
+
+.ai-suggestion-box .ai-apply-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent-light);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.ai-suggestion-box .ai-apply-btn:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+.field-with-ai {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.field-with-ai input,
+.field-with-ai textarea {
+  flex: 1;
+}
+
+/* AI typing indicator on job title */
+.ai-auto-hint {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.72rem;
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+
+.ai-auto-hint.visible {
+  opacity: 1;
+  animation: aiPulse 1.5s ease infinite;
+}
+
+/* ============================================================
    RESPONSIVE — MOBILE (≤ 768px)
    ============================================================ */
 @media (max-width: 768px) {

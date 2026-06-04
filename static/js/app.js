@@ -93,6 +93,7 @@
     var totalSteps = 6;
     var selectedTemplate = 'modern';
     var generatedResumeData = null;
+    var lastScoreData = null; // Store scoring results to apply on next generation
 
     function initBuilderPage() {
         // Initialize step indicator
@@ -467,6 +468,233 @@
             });
     };
 
+    // --- On-the-fly AI Suggestions ---
+    var aiDebounceTimers = {};
+
+    // Debounced auto-suggest when user types a job title
+    window.aiAutoSuggestJobTitle = function (input) {
+        var hint = $('#aiJobTitleHint');
+        var box = $('#ai-suggestion-jobtitle');
+        var title = input.value.trim();
+
+        // Clear previous timer
+        clearTimeout(aiDebounceTimers['jobtitle']);
+
+        if (title.length < 3) {
+            if (hint) hint.classList.remove('visible');
+            if (box) { box.classList.remove('visible'); box.innerHTML = ''; }
+            return;
+        }
+
+        // Show "AI ready" hint
+        if (hint) hint.classList.add('visible');
+
+        // Debounce — wait 1.5s after user stops typing
+        aiDebounceTimers['jobtitle'] = setTimeout(function () {
+            if (hint) {
+                hint.textContent = '✨ Thinking...';
+            }
+            fetch('/api/suggest-content', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ job_title: title, field: 'all' })
+            })
+                .then(function (res) {
+                    if (!res.ok) throw new Error('Failed');
+                    return res.json();
+                })
+                .then(function (data) {
+                    if (data.success && box) {
+                        var html = '<div class="ai-tag">✨ AI Suggestions for "' + escapeHTML(title) + '"</div>';
+                        if (data.skills && data.skills.length) {
+                            html += '<ul><li><strong>' + data.skills.length + ' skills:</strong> ' + data.skills.slice(0, 8).join(', ') + (data.skills.length > 8 ? ' +' + (data.skills.length - 8) + ' more' : '') + '</li></ul>';
+                        }
+                        if (data.summary) {
+                            html += '<ul><li><strong>Summary:</strong> ' + escapeHTML(data.summary.substring(0, 150)) + '...</li></ul>';
+                        }
+                        html += '<button class="ai-apply-btn" onclick="aiApplySuggestions()">Apply All Suggestions →</button>';
+                        box.innerHTML = html;
+                        box.classList.add('visible');
+                    }
+                })
+                .catch(function () { })
+                .finally(function () {
+                    if (hint) hint.classList.remove('visible');
+                });
+        }, 1500);
+    };
+
+    // Store latest AI suggestion data for applying
+    var _latestAiSuggestions = null;
+
+    // Override aiSuggestAll to also store suggestions
+    var _origAiSuggestAll = window.aiSuggestAll;
+    window.aiSuggestAll = function () {
+        var jobTitle = $('#targetJob');
+        var title = jobTitle ? jobTitle.value.trim() : '';
+        if (!title) {
+            showToast('Enter a job title first.', 'error');
+            return;
+        }
+
+        var btn = $('#aiSuggestAllBtn');
+        var spinner = $('#aiAllSpinner');
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'block';
+
+        fetch('/api/suggest-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_title: title, field: 'all' })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Failed: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    _latestAiSuggestions = data;
+                    aiApplySuggestions();
+                }
+            })
+            .catch(function (err) {
+                console.error('AI suggest error:', err);
+                showToast('Failed to get AI suggestions.', 'error');
+            })
+            .finally(function () {
+                if (btn) btn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
+    // Apply all stored AI suggestions to the form
+    window.aiApplySuggestions = function () {
+        if (!_latestAiSuggestions) {
+            // Try from auto-suggest
+            showToast('Generate suggestions first by entering a job title.', 'error');
+            return;
+        }
+        var data = _latestAiSuggestions;
+        var count = 0;
+
+        // Apply skills
+        if (data.skills && Array.isArray(data.skills)) {
+            data.skills.forEach(function (skill) {
+                if (skills.indexOf(skill) === -1) {
+                    addSkill(skill);
+                    count++;
+                }
+            });
+        }
+
+        // Apply summary to first empty experience description
+        if (data.summary) {
+            var entries = $('#experienceEntries');
+            if (entries) {
+                var firstDesc = entries.querySelector('textarea[name="description"]');
+                if (firstDesc && !firstDesc.value.trim()) {
+                    firstDesc.value = data.summary;
+                    count++;
+                }
+            }
+        }
+
+        // Apply bullets — add as new experience if none exist
+        if (data.bullets && Array.isArray(data.bullets) && data.bullets.length) {
+            var entries = $('#experienceEntries');
+            if (entries && entries.children.length === 0) {
+                addExperience();
+            }
+            if (entries && entries.children.length > 0) {
+                var lastEntry = entries.children[entries.children.length - 1];
+                var lastDesc = lastEntry.querySelector('textarea[name="description"]');
+                if (lastDesc) {
+                    var existing = lastDesc.value.trim();
+                    lastDesc.value = (existing ? existing + '\n' : '') + data.bullets.join('\n');
+                    count += data.bullets.length;
+                }
+            }
+        }
+
+        showToast('Applied ' + count + ' AI suggestions to your resume!', 'success');
+
+        // Hide suggestion box
+        var box = $('#ai-suggestion-jobtitle');
+        if (box) { box.classList.remove('visible'); box.innerHTML = ''; }
+    };
+
+    // AI improve a specific field (experience description, etc.)
+    window.aiImproveField = function (btn, fieldType) {
+        var wrapper = btn.parentElement;
+        var textarea = wrapper.querySelector('textarea');
+        var suggestionBox = wrapper.parentElement.querySelector('.ai-suggestion-box');
+
+        if (!textarea || !suggestionBox) return;
+
+        var content = textarea.value.trim();
+        if (!content) {
+            showToast('Write some content first, then let AI improve it.', 'error');
+            return;
+        }
+
+        btn.classList.add('ai-loading');
+        btn.textContent = '⏳';
+
+        fetch('/api/suggest-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                job_title: content.substring(0, 100),
+                field: 'bullets'
+            })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Failed');
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && suggestionBox) {
+                    var html = '<div class="ai-tag">✨ AI Improved Version</div>';
+                    if (data.bullets) {
+                        html += '<ul>';
+                        data.bullets.forEach(function (b) {
+                            html += '<li>' + escapeHTML(b) + '</li>';
+                        });
+                        html += '</ul>';
+                    }
+                    html += '<button class="ai-apply-btn" onclick="aiApplyFieldSuggestion(this)">Replace with AI Version</button>';
+                    suggestionBox.innerHTML = html;
+                    suggestionBox.classList.add('visible');
+                    suggestionBox.dataset.original = content;
+                }
+            })
+            .catch(function () {
+                showToast('Failed to get AI suggestion.', 'error');
+            })
+            .finally(function () {
+                btn.classList.remove('ai-loading');
+                btn.textContent = '✨';
+            });
+    };
+
+    // Apply a field-level suggestion
+    window.aiApplyFieldSuggestion = function (btn) {
+        var box = btn.closest('.ai-suggestion-box');
+        if (!box) return;
+        var wrapper = box.parentElement.querySelector('.field-with-ai');
+        var textarea = wrapper ? wrapper.querySelector('textarea') : null;
+        if (!textarea) return;
+
+        // Get the improved bullets from the suggestion box
+        var lis = box.querySelectorAll('li');
+        var improved = [];
+        lis.forEach(function (li) { improved.push(li.textContent); });
+
+        textarea.value = improved.join('\n');
+        box.classList.remove('visible');
+        showToast('Applied AI improvement!', 'success');
+    };
+
     // --- Template Selection ---
     window.selectTemplate = function (template) {
         selectedTemplate = template;
@@ -551,6 +779,11 @@
     // --- Generate Resume ---
     window.generateResume = function () {
         var formData = collectFormData();
+
+        // Auto-apply score suggestions if available from previous scoring run
+        if (lastScoreData) {
+            formData.score_suggestions = lastScoreData;
+        }
         var btn = $('#generateBtn');
         var originalHTML = btn.innerHTML;
 
@@ -1208,6 +1441,7 @@
             })
             .then(function (data) {
                 if (data.success && data.score) {
+                    lastScoreData = data.score; // Store for auto-apply on generation
                     renderScorePanel(data.score);
                 } else {
                     throw new Error('Unexpected score response');
@@ -1224,11 +1458,10 @@
     };
 
     function getScoreColorClass(score) {
-        if (score >= 90) return 'score-color-bright-green';
-        if (score >= 75) return 'score-color-green';
-        if (score >= 60) return 'score-color-yellow';
-        if (score >= 40) return 'score-color-orange';
-        return 'score-color-red';
+        if (score >= 80) return 'score-green';
+        if (score >= 60) return 'score-yellow';
+        if (score >= 40) return 'score-orange';
+        return 'score-red';
     }
 
     function animateNumber(element, target, duration) {
