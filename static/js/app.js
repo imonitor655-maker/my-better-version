@@ -844,7 +844,17 @@
     // --- PDF Upload ---
     function initPdfUpload() {
         var fileInput = $('#pdfFileInput');
+        var uploadBtn = $('#pdfUploadBtn');
         if (!fileInput) return;
+
+        // Click upload button → open file dialog
+        if (uploadBtn) {
+            uploadBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                fileInput.click();
+            });
+        }
+
         fileInput.addEventListener('change', function () {
             var file = fileInput.files[0];
             if (!file) return;
@@ -890,7 +900,8 @@
                 if (uploadBtn) uploadBtn.style.display = 'inline-flex';
                 if (spinner) spinner.style.display = 'none';
                 // Reset file input
-                if (fileInput) fileInput.value = '';
+                var fi = $('#pdfFileInput');
+                if (fi) fi.value = '';
             });
     }
 
