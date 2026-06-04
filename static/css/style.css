@@ -695,6 +695,12 @@ body {
   transition: stroke-dashoffset 0.8s ease;
 }
 
+/* Dynamic score ring colors */
+.score-ring-progress .fill.score-green  { stroke: var(--success); }
+.score-ring-progress .fill.score-yellow { stroke: var(--warning); }
+.score-ring-progress .fill.score-red    { stroke: var(--error); }
+.score-ring-progress .fill.score-orange { stroke: #F97316; }
+
 .score-number {
   position: absolute;
   inset: 0;
@@ -704,7 +710,13 @@ body {
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--text-primary);
+  transition: color 0.3s ease;
 }
+
+.score-number.score-green  { color: var(--success); }
+.score-number.score-yellow { color: var(--warning); }
+.score-number.score-red    { color: var(--error); }
+.score-number.score-orange { color: #F97316; }
 
 .score-bars {
   display: flex;
@@ -791,11 +803,114 @@ body {
 
 .vacancy-panel {
   background: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
+  border: 1px solid var(--border-visible);
   border-radius: var(--radius-card);
   padding: 20px;
-  margin-top: 8px;
+  margin-top: 12px;
   animation: stepFade 0.3s ease both;
+}
+
+.vacancy-panel textarea {
+  width: 100%;
+  min-height: 120px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius-btn);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  padding: 14px 16px;
+  resize: vertical;
+  transition: border-color var(--transition-fast);
+  line-height: 1.6;
+}
+
+.vacancy-panel textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.15);
+}
+
+.vacancy-panel textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Match result visibility */
+.match-result {
+  text-align: center;
+  padding: 20px;
+  margin-top: 16px;
+  background: rgba(30, 144, 255, 0.04);
+  border: 1px solid var(--border-visible);
+  border-radius: var(--radius-btn);
+}
+
+.match-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.match-ats {
+  text-align: left;
+}
+
+.match-ats-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.match-ats-value {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.match-section {
+  text-align: left;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.match-section h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.keyword-group {
+  margin-bottom: 8px;
+}
+
+.keyword-group-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.keyword-group-label.matching {
+  color: var(--success);
+}
+
+.keyword-group-label.missing {
+  color: var(--error);
+}
+
+.keyword-group-label.optional {
+  color: var(--info);
 }
 
 .compare-spinner {
@@ -808,12 +923,7 @@ body {
   display: inline-block;
 }
 
-/* Match result */
-.match-result {
-  text-align: center;
-  padding: 24px;
-}
-
+/* Match score circle (overrides for ring in match-result) */
 .match-score-circle {
   position: relative;
   width: 100px;
@@ -837,6 +947,12 @@ body {
   stroke-linecap: round;
   transition: stroke-dashoffset 0.8s ease;
 }
+
+/* Dynamic match score ring colors */
+.match-score-circle .fill.score-green  { stroke: var(--success); }
+.match-score-circle .fill.score-yellow { stroke: var(--warning); }
+.match-score-circle .fill.score-red    { stroke: var(--error); }
+.match-score-circle .fill.score-orange { stroke: #F97316; }
 
 .match-ats-value {
   position: absolute;

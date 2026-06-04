@@ -364,6 +364,109 @@
         }
     };
 
+    // --- AI Suggestions ---
+    window.aiSuggestSkills = function () {
+        var jobTitle = $('#targetJob');
+        var title = jobTitle ? jobTitle.value.trim() : '';
+        if (!title) {
+            showToast('Enter a job title first (in the Target Job step) to get AI suggestions.', 'error');
+            return;
+        }
+
+        var btn = $('#aiSuggestSkillsBtn');
+        var spinner = $('#aiSkillsSpinner');
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'inline';
+
+        fetch('/api/suggest-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_title: title, field: 'skills' })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Failed: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.skills) {
+                    data.skills.forEach(function (skill) {
+                        if (skills.indexOf(skill) === -1) {
+                            addSkill(skill);
+                        }
+                    });
+                    showToast('Added ' + data.skills.length + ' suggested skills!', 'success');
+                }
+            })
+            .catch(function (err) {
+                console.error('AI suggest error:', err);
+                showToast('Failed to get AI suggestions.', 'error');
+            })
+            .finally(function () {
+                if (btn) btn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
+    window.aiSuggestAll = function () {
+        var jobTitle = $('#targetJob');
+        var title = jobTitle ? jobTitle.value.trim() : '';
+        if (!title) {
+            showToast('Enter a job title first.', 'error');
+            return;
+        }
+
+        var btn = $('#aiSuggestAllBtn');
+        var spinner = $('#aiAllSpinner');
+        if (btn) btn.disabled = true;
+        if (spinner) spinner.style.display = 'block';
+
+        fetch('/api/suggest-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ job_title: title, field: 'all' })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Failed: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success) {
+                    var added = 0;
+                    // Add skills
+                    if (data.skills && Array.isArray(data.skills)) {
+                        data.skills.forEach(function (skill) {
+                            if (skills.indexOf(skill) === -1) {
+                                addSkill(skill);
+                                added++;
+                            }
+                        });
+                    }
+                    // Fill summary into first experience description as suggestion
+                    if (data.summary) {
+                        var firstDesc = $('textarea[name="description"]', $('#experienceEntries'));
+                        if (firstDesc && !firstDesc.value.trim()) {
+                            firstDesc.value = '💡 AI suggestion — customize this: ' + data.summary;
+                        }
+                        added++;
+                    }
+                    // Add bullet suggestions as experience entries hint
+                    if (data.bullets && Array.isArray(data.bullets)) {
+                        showToast('AI added ' + (added) + ' suggestions. Also suggested ' + data.bullets.length + ' bullet points — add them to your experience!', 'success');
+                    } else {
+                        showToast('AI added ' + added + ' suggestions!', 'success');
+                    }
+                }
+            })
+            .catch(function (err) {
+                console.error('AI suggest error:', err);
+                showToast('Failed to get AI suggestions.', 'error');
+            })
+            .finally(function () {
+                if (btn) btn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
     // --- Template Selection ---
     window.selectTemplate = function (template) {
         selectedTemplate = template;
@@ -1171,6 +1274,17 @@
         circle.className = 'score-circle';
         circle.classList.add(getScoreColorClass(overall));
 
+        // Apply color to ring fill and number
+        var colorClass = getScoreColorClass(overall);
+        if (ringProgress) {
+            ringProgress.classList.remove('score-green', 'score-yellow', 'score-red', 'score-orange');
+            ringProgress.classList.add(colorClass);
+        }
+        if (numberEl) {
+            numberEl.classList.remove('score-green', 'score-yellow', 'score-red', 'score-orange');
+            numberEl.classList.add(colorClass);
+        }
+
         // Animate ring
         var circumference = 339.29;
         var offset = circumference - (circumference * overall / 100);
@@ -1428,9 +1542,14 @@
         if (matchCircle) {
             matchCircle.className = 'match-score-circle ' + getScoreColorClass(matchScore);
         }
-        if (matchNumber) animateNumber(matchNumber, matchScore);
-        // Animate match score ring
+        if (matchNumber) {
+            matchNumber.classList.remove('score-green', 'score-yellow', 'score-red', 'score-orange');
+            matchNumber.classList.add(getScoreColorClass(matchScore));
+        }
+        // Animate match score ring with color
         if (matchRing) {
+            matchRing.classList.remove('score-green', 'score-yellow', 'score-red', 'score-orange');
+            matchRing.classList.add(getScoreColorClass(matchScore));
             var circumference = 339.29;
             var offset = circumference - (circumference * matchScore / 100);
             setTimeout(function () {

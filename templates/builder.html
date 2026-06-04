@@ -154,7 +154,12 @@
                         <div class="match-result" id="matchResult" style="display:none">
                             <div class="match-score-row">
                                 <div class="match-score-circle" id="matchScoreCircle">
-                                    <span id="matchScoreNumber">0</span>
+                                    <svg class="match-ring-svg" viewBox="0 0 120 120">
+                                        <circle class="track" cx="60" cy="60" r="54" />
+                                        <circle class="fill" id="matchRingProgress" cx="60" cy="60" r="54"
+                                            stroke-dasharray="339.29" stroke-dashoffset="339.29" />
+                                    </svg>
+                                    <span class="match-ats-value" id="matchScoreNumber">0</span>
                                 </div>
                                 <div class="match-ats">
                                     <span class="match-ats-label">ATS Match</span>
@@ -381,6 +386,11 @@
                         <div class="tag-list" id="skillTags"></div>
                         <input type="text" id="skillInput" placeholder="Type a skill and press Enter...">
                     </div>
+                    <button class="btn btn-ghost btn-sm ai-suggest-btn" id="aiSuggestSkillsBtn" onclick="aiSuggestSkills()" style="margin-top:8px">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                        AI Suggest Skills
+                    </button>
+                    <span id="aiSkillsSpinner" style="display:none;margin-left:8px;font-size:0.8rem;color:var(--text-muted)">Suggesting...</span>
                 </div>
                 <div class="skill-suggestions">
                     <span class="suggestion-label">Popular:</span>
@@ -405,7 +415,14 @@
                 </div>
                 <div class="form-group">
                     <label for="targetJob">Job Title</label>
-                    <input type="text" id="targetJob" placeholder="e.g. Senior Frontend Developer">
+                    <div style="display:flex;gap:8px;align-items:start">
+                        <input type="text" id="targetJob" placeholder="e.g. Senior Frontend Developer" style="flex:1">
+                        <button class="btn btn-ghost btn-sm ai-suggest-btn" id="aiSuggestAllBtn" onclick="aiSuggestAll()" title="Get AI suggestions for skills, summary & bullet points based on this job title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-4.5 0m3.75 2.383a14.406 14.406 0 0 1-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 1 0-7.517 0c.85.493 1.509 1.333 1.509 2.316V18"/></svg>
+                            AI Suggest All
+                        </button>
+                    </div>
+                    <span id="aiAllSpinner" style="display:none;font-size:0.8rem;color:var(--text-muted);margin-top:4px;display:none">Generating suggestions...</span>
                 </div>
                 <div class="form-row">
                     <div class="form-group">

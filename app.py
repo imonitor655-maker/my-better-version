@@ -153,15 +153,79 @@ def api_optimize_section():
     current_content = data.get('current_content', '')
     instruction = data.get('instruction', '')
     vacancy_context = data.get('vacancy_context', '')
-    
+
     if not current_content.strip() or not instruction.strip():
         return jsonify({'error': 'Content and instruction are required'}), 400
-    
+
     result = optimize_section(current_content, instruction, vacancy_context)
     if not result.get('success'):
         return jsonify(result), 500
-    
+
     return jsonify(result)
+
+
+@app.route('/api/suggest-content', methods=['POST'])
+def api_suggest_content():
+    """Generate AI-powered suggestions for resume fields based on job title."""
+    data = request.json
+    job_title = data.get('job_title', '').strip()
+    field = data.get('field', 'all')  # 'skills', 'summary', 'bullets', 'all'
+
+    if not job_title:
+        return jsonify({'error': 'Job title is required'}), 400
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=os.getenv('OPENAI_API_KEY', ''))
+
+        if field == 'skills':
+            prompt = f"""You are a career expert. Suggest the 15 most relevant and in-demand skills for a "{job_title}" role.
+Return ONLY a JSON array of skill strings, e.g. ["Python", "Project Management", ...]. No explanation."""
+
+        elif field == 'summary':
+            prompt = f"""You are a professional resume writer. Write a compelling, ATS-optimized professional summary for a "{job_title}" role.
+The summary should be 2-3 sentences, highlight key strengths, and use strong action verbs.
+Return ONLY the summary text, no quotes, no labels."""
+
+        elif field == 'bullets':
+            prompt = f"""You are a professional resume writer. Suggest 6-8 achievement-oriented bullet points for a "{job_title}" role.
+Each bullet should start with a strong action verb and include quantifiable metrics where possible.
+Use the STAR method implicitly. Return ONLY a JSON array of strings, e.g. ["Led team of 5 to deliver...", ...]."""
+
+        else:  # 'all'
+            prompt = f"""You are a professional resume writer and career expert helping build a resume for a "{job_title}" role.
+Return a JSON object with exactly these keys:
+- "skills": array of 12-15 most relevant skills (e.g. ["Python", "Leadership"])
+- "summary": 2-3 sentence professional summary string
+- "bullets": array of 6-8 achievement-oriented bullet point strings, each starting with an action verb
+No explanation, just the JSON object."""
+
+        response = client.chat.completions.create(
+            model='gpt-4o-mini',
+            messages=[
+                {'role': 'system', 'content': 'You are an expert career coach and resume writer. Always respond with valid JSON when asked, or plain text for summaries. Never add markdown formatting or code blocks.'},
+                {'role': 'user', 'content': prompt}
+            ],
+            temperature=0.5,
+            max_tokens=1000
+        )
+
+        import json
+        content = response.choices[0].message.content.strip()
+        # Remove markdown code block if present
+        if content.startswith('```'):
+            content = content.split('\n', 1)[1].rsplit('```', 1)[0].strip()
+
+        if field == 'summary':
+            return jsonify({'success': True, 'summary': content})
+        else:
+            result = json.loads(content)
+            return jsonify({'success': True, **result})
+
+    except json.JSONDecodeError:
+        return jsonify({'success': True, 'summary': content if field != 'summary' else content})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/api/create-checkout', methods=['POST'])
