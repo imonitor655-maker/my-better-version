@@ -4,7 +4,7 @@ from flask_cors import CORS
 from api.resume_generator import generate_resume
 from api.pdf_parser import parse_resume_pdf
 from api.pdf_export import create_pdf
-from api.scoring import score_resume, compare_vacancy, generate_walkthrough, optimize_section
+from api.scoring import score_resume, compare_vacancy, generate_walkthrough, optimize_section, optimize_resume_fields
 from api.payment import create_checkout_session, verify_webhook
 from dotenv import load_dotenv
 
@@ -158,6 +158,24 @@ def api_optimize_section():
         return jsonify({'error': 'Content and instruction are required'}), 400
 
     result = optimize_section(current_content, instruction, vacancy_context)
+    if not result.get('success'):
+        return jsonify(result), 500
+
+    return jsonify(result)
+
+
+@app.route('/api/optimize-fields', methods=['POST'])
+def api_optimize_fields():
+    """Apply AI optimizations to all resume form fields based on scoring suggestions."""
+    data = request.json
+    form_data = data.get('form_data', {})
+    score_suggestions = data.get('score_suggestions', {})
+    vacancy_text = data.get('vacancy_text', '')
+
+    if not form_data:
+        return jsonify({'error': 'Form data is required'}), 400
+
+    result = optimize_resume_fields(form_data, score_suggestions, vacancy_text)
     if not result.get('success'):
         return jsonify(result), 500
 

@@ -112,6 +112,11 @@
                     <div class="score-panel" id="scorePanel" style="display:none">
                         <div class="score-panel-header">
                             <h4>Resume Score</h4>
+                            <div class="score-progress-tracker" id="scoreProgress" style="display:none">
+                                <span class="score-before" id="scoreBefore">--</span>
+                                <span class="score-arrow">→</span>
+                                <span class="score-after score-green" id="scoreAfter">--</span>
+                            </div>
                         </div>
                         <div class="score-circle-wrapper">
                             <div class="score-circle" id="scoreCircle">
@@ -124,6 +129,14 @@
                         </div>
                         <div class="score-bars" id="scoreBars"></div>
                         <div class="quick-wins" id="quickWinsList"></div>
+                        <button class="btn btn-primary btn-block apply-improvements-btn" id="applyImprovementsBtn" onclick="applyAiImprovements()" style="margin-top:12px">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            Apply AI Improvements
+                        </button>
+                        <div class="apply-improvements-spinner" id="applyImprovementsSpinner" style="display:none;margin-top:8px">
+                            <div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0"></div>
+                            <span>AI is optimizing your resume...</span>
+                        </div>
                         <div class="score-details" id="scoreDetails" style="display:none">
                             <h4 id="scoreDetailsTitle">Details</h4>
                             <ul id="scoreDetailsList"></ul>
@@ -205,6 +218,10 @@
                         <button class="btn btn-primary btn-sm btn-block walkthrough-btn" id="walkthroughBtn" onclick="generateWalkthrough()" style="margin-top:8px">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
                             Generate Walkthrough
+                        </button>
+                        <button class="btn btn-primary btn-block optimize-vacancy-btn" id="optimizeVacancyBtn" onclick="optimizeForVacancy()" style="margin-top:8px;display:none">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                            Optimize Resume for This Job
                         </button>
                         <div class="walkthrough-spinner" id="walkthroughSpinner" style="display:none">
                             <div class="spinner" style="width:20px;height:20px;border-width:2px;margin:0"></div>

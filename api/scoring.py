@@ -294,3 +294,127 @@ def optimize_section(current_content, instruction, vacancy_context=""):
         
     except Exception as e:
         return {'success': False, 'error': str(e)}
+
+
+OPTIMIZE_FIELDS_PROMPT = """You are an expert ATS resume optimizer. Your job is to take the user's current resume data and apply ALL scoring suggestions to produce an improved version.
+
+GOAL: Maximize ATS score by applying every suggestion. Rewrite fields to be stronger, add missing keywords, improve action verbs, quantify achievements, and fill gaps.
+
+CURRENT RESUME DATA:
+{current_data}
+
+SCORING SUGGESTIONS TO APPLY:
+{score_suggestions}
+
+JOB VACANCY CONTEXT (if provided):
+{vacancy_context}
+
+Return ONLY valid JSON with the exact same structure as the input data, but with improved content:
+{{
+  "personal_info": {{
+    "full_name": "string",
+    "email": "string",
+    "phone": "string",
+    "location": "string",
+    "linkedin": "string"
+  }},
+  "experience": [
+    {{
+      "title": "string — improved if needed",
+      "company": "string",
+      "startDate": "string",
+      "endDate": "string",
+      "description": "string — REWRITTEN with strong action verbs, quantified achievements, ATS keywords from suggestions. Each bullet on its own line starting with •"
+    }}
+  ],
+  "education": [
+    {{
+      "school": "string",
+      "degree": "string",
+      "startDate": "string",
+      "endDate": "string",
+      "gpa": "string"
+    }}
+  ],
+  "skills": ["array of improved/relevant skills — add missing keywords from suggestions"],
+  "target": {{
+    "job_title": "string",
+    "industry": "string",
+    "years_experience": "string",
+    "job_description": "string"
+  }},
+  "template": "modern",
+  "summary": "string — professional summary incorporating suggestions"
+}}
+
+CRITICAL RULES:
+- Apply ALL quick_wins suggestions
+- Add ALL suggested_keywords to skills list
+- Rewrite ALL experience descriptions with stronger action verbs
+- Add numbers/metrics to every bullet point (quantify!)
+- Fix ALL weaknesses identified in content_quality
+- Fill ALL missing_sections
+- Mirror language/keywords from vacancy if provided
+- Keep personal info (name, email, phone) EXACTLY the same
+- Keep job titles and company names the same
+- Do NOT invent new jobs or fake education
+- Return ONLY the JSON, nothing else"""
+
+
+def optimize_resume_fields(form_data, score_suggestions=None, vacancy_text=""):
+    """Take current form data + scoring suggestions, return AI-optimized form data."""
+    
+    import json as json_module
+    
+    current_data_json = json_module.dumps(form_data, indent=2, ensure_ascii=False)
+    
+    suggestions_text = ""
+    if score_suggestions:
+        suggestions_text = json_module.dumps(score_suggestions, indent=2, ensure_ascii=False)
+    else:
+        suggestions_text = "No specific scoring suggestions available. Apply general ATS best practices."
+    
+    vacancy_text = vacancy_text or "No vacancy provided — optimize for general ATS compatibility."
+    
+    prompt = OPTIMIZE_FIELDS_PROMPT.format(
+        current_data=current_data_json,
+        score_suggestions=suggestions_text,
+        vacancy_context=vacancy_text
+    )
+    
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are an expert ATS resume optimizer. Return ONLY valid JSON with improved resume fields."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=4000
+        )
+        
+        content = response.choices[0].message.content.strip()
+        if content.startswith('```'):
+            lines = content.split('\n')
+            lines = lines[1:]
+            if lines and lines[-1].strip() == '```':
+                lines = lines[:-1]
+            content = '\n'.join(lines)
+        content = content.strip()
+        if content.startswith('json'):
+            content = content[4:].strip()
+        
+        result = json_module.loads(content)
+        return {'success': True, 'optimized_fields': result}
+        
+    except json_module.JSONDecodeError as e:
+        try:
+            start = content.index('{')
+            end = content.rindex('}') + 1
+            result = json_module.loads(content[start:end])
+            return {'success': True, 'optimized_fields': result}
+        except (ValueError, json_module.JSONDecodeError):
+            return {'success': False, 'error': f'Failed to parse AI response: {str(e)}'}
+    
+    except Exception as e:
+        return {'success': False, 'error': str(e)}

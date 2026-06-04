@@ -1457,6 +1457,227 @@
             });
     };
 
+    // --- Apply AI Improvements (Score → Improve → Re-score loop) ---
+    window.applyAiImprovements = function () {
+        var btn = $('#applyImprovementsBtn');
+        var spinner = $('#applyImprovementsSpinner');
+        if (!btn || btn.disabled) return;
+
+        btn.disabled = true;
+        if (spinner) spinner.style.display = 'flex';
+
+        var formData = collectFormData();
+        var vacancyText = '';
+        var vacEl = $('#vacancyText');
+        if (vacEl) vacancyText = vacEl.value.trim();
+
+        // Store the "before" score
+        var beforeScore = 0;
+        if (lastScoreData) {
+            beforeScore = extractScore(lastScoreData.overall_score);
+        }
+
+        fetch('/api/optimize-fields', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                form_data: formData,
+                score_suggestions: lastScoreData || {},
+                vacancy_text: vacancyText
+            })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Server error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.optimized_fields) {
+                    // Fill form fields with optimized data
+                    fillFormFromOptimized(data.optimized_fields);
+
+                    showToast('AI improvements applied! Re-scoring...', 'success');
+
+                    // Auto re-score after a brief delay to let form settle
+                    setTimeout(function () {
+                        scoreResume();
+
+                        // Show score progress tracker
+                        if (beforeScore > 0) {
+                            var progress = $('#scoreProgress');
+                            var beforeEl = $('#scoreBefore');
+                            var afterEl = $('#scoreAfter');
+                            if (progress) progress.style.display = 'flex';
+                            if (beforeEl) beforeEl.textContent = beforeScore + '%';
+                            // After score will be updated once re-score completes
+                        }
+                    }, 800);
+                } else {
+                    throw new Error('No optimized fields returned');
+                }
+            })
+            .catch(function (err) {
+                console.error('Apply improvements error:', err);
+                showToast('Failed to apply AI improvements.', 'error');
+            })
+            .finally(function () {
+                btn.disabled = false;
+                if (spinner) spinner.style.display = 'none';
+            });
+    };
+
+    // Fill form fields from optimized data returned by API
+    function fillFormFromOptimized(fields) {
+        // Personal info
+        if (fields.personal_info) {
+            setField('fullName', fields.personal_info.full_name);
+            setField('email', fields.personal_info.email);
+            setField('phone', fields.personal_info.phone);
+            setField('location', fields.personal_info.location);
+            setField('linkedin', fields.personal_info.linkedin);
+        }
+
+        // Target
+        if (fields.target) {
+            setField('targetJob', fields.target.job_title);
+            setField('industry', fields.target.industry);
+            setField('yearsExperience', fields.target.years_experience);
+            setField('jobDescription', fields.target.job_description);
+        }
+
+        // Experience — rebuild entries
+        if (fields.experience && fields.experience.length > 0) {
+            var entriesContainer = $('#experienceEntries');
+            if (entriesContainer) {
+                entriesContainer.innerHTML = '';
+                fields.experience.forEach(function (exp) {
+                    addExperience();
+                    var entry = entriesContainer.lastElementChild;
+                    if (entry) {
+                        var titleInput = entry.querySelector('input[name="title"]');
+                        var companyInput = entry.querySelector('input[name="company"]');
+                        var startInput = entry.querySelector('input[name="startDate"]');
+                        var endInput = entry.querySelector('input[name="endDate"]');
+                        var descInput = entry.querySelector('textarea[name="description"]');
+
+                        if (titleInput) titleInput.value = exp.title || '';
+                        if (companyInput) companyInput.value = exp.company || '';
+                        if (startInput) startInput.value = exp.startDate || '';
+                        if (endInput) endInput.value = exp.endDate || '';
+                        if (descInput) descInput.value = exp.description || '';
+                    }
+                });
+            }
+        }
+
+        // Education — rebuild entries
+        if (fields.education && fields.education.length > 0) {
+            var eduContainer = $('#educationEntries');
+            if (eduContainer) {
+                eduContainer.innerHTML = '';
+                fields.education.forEach(function (edu) {
+                    addEducation();
+                    var entry = eduContainer.lastElementChild;
+                    if (entry) {
+                        var schoolInput = entry.querySelector('input[name="school"]');
+                        var degreeInput = entry.querySelector('input[name="degree"]');
+                        var startInput = entry.querySelector('input[name="startDate"]');
+                        var endInput = entry.querySelector('input[name="endDate"]');
+                        var gpaInput = entry.querySelector('input[name="gpa"]');
+
+                        if (schoolInput) schoolInput.value = edu.school || '';
+                        if (degreeInput) degreeInput.value = edu.degree || '';
+                        if (startInput) startInput.value = edu.startDate || '';
+                        if (endInput) endInput.value = edu.endDate || '';
+                        if (gpaInput) gpaInput.value = edu.gpa || '';
+                    }
+                });
+            }
+        }
+
+        // Skills — clear and re-add
+        if (fields.skills && fields.skills.length > 0) {
+            // Clear existing skill tags
+            skills = [];
+            var skillTagsEl = $('#skillTags');
+            if (skillTagsEl) skillTagsEl.innerHTML = '';
+
+            fields.skills.forEach(function (skill) {
+                if (typeof skill === 'string' && skill.trim()) {
+                    addSkill(skill.trim());
+                }
+            });
+        }
+    }
+
+    function setField(id, value) {
+        if (!value || typeof value !== 'string') return;
+        var el = document.getElementById(id);
+        if (el) el.value = value;
+    }
+
+    // Update score progress tracker after re-score
+    var _origRenderScorePanel = null; // Will be set to intercept renderScorePanel
+
+    // Intercept renderScorePanel to update progress tracker
+    var _origRenderScorePanelFn = null;
+
+    // --- Optimize for Vacancy (Compare → Improve → Re-compare loop) ---
+    window.optimizeForVacancy = function () {
+        var btn = $('#optimizeVacancyBtn');
+        if (!btn || btn.disabled) return;
+
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner" style="width:16px;height:16px;border-width:2px;margin:0"></div> Optimizing...';
+
+        var formData = collectFormData();
+        var vacancyText = '';
+        var vacEl = $('#vacancyText');
+        if (vacEl) vacancyText = vacEl.value.trim();
+
+        if (!vacancyText) {
+            showToast('Paste a job description first.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Optimize Resume for This Job';
+            return;
+        }
+
+        // Get match analysis to use as suggestions
+        fetch('/api/optimize-fields', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                form_data: formData,
+                score_suggestions: lastScoreData || {},
+                vacancy_text: vacancyText
+            })
+        })
+            .then(function (res) {
+                if (!res.ok) throw new Error('Server error: ' + res.status);
+                return res.json();
+            })
+            .then(function (data) {
+                if (data.success && data.optimized_fields) {
+                    fillFormFromOptimized(data.optimized_fields);
+                    showToast('Resume optimized for this job! Re-comparing...', 'success');
+
+                    // Auto re-compare after delay
+                    setTimeout(function () {
+                        compareVacancy();
+                    }, 800);
+                } else {
+                    throw new Error('No optimized fields returned');
+                }
+            })
+            .catch(function (err) {
+                console.error('Optimize vacancy error:', err);
+                showToast('Failed to optimize for this job.', 'error');
+            })
+            .finally(function () {
+                btn.disabled = false;
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Optimize Resume for This Job';
+            });
+    };
+
     function getScoreColorClass(score) {
         if (score >= 80) return 'score-green';
         if (score >= 60) return 'score-yellow';
@@ -1527,6 +1748,14 @@
 
         // Animate number
         if (numberEl) animateNumber(numberEl, overall);
+
+        // Update score progress tracker if visible
+        var afterEl = $('#scoreAfter');
+        if (afterEl) {
+            afterEl.textContent = overall + '%';
+            var colorClass = getScoreColorClass(overall);
+            afterEl.className = 'score-after ' + colorClass;
+        }
 
         // Sub-scores — API returns objects like {score: N, issues: [...], passes: [...]}
         var barsContainer = $('#scoreBars');
@@ -1766,6 +1995,10 @@
         var result = $('#matchResult');
         if (!result) return;
         result.style.display = 'flex';
+
+        // Show the "Optimize for This Job" button now that we have comparison results
+        var optBtn = $('#optimizeVacancyBtn');
+        if (optBtn) optBtn.style.display = 'block';
 
         // Match score
         var matchScore = extractScore(analysis.match_score);
